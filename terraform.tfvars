@@ -1,0 +1,3 @@
+cluster_name = "test"
+kubernetes_version = "1.35"
+admin_principal_arns = ["arn:aws:iam::092620891680:user/admin"] #put the user arn of the user you want to have admin access to the cluster
