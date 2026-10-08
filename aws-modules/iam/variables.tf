@@ -27,3 +27,18 @@ variable "enable_external_dns" {
   type        = bool
   default     = false
 }
+variable "load_balancer_controller_policy_file" {
+  description = "Path to the AWS Load Balancer Controller IAM policy file relative to the IAM module."
+  type    = string
+  default = "aws_lb_policies/aws-load-balancer-controller.json"
+}
+variable "loki_bucket_arn" {
+  description = "ARN of the S3 bucket used by Loki."
+  type    = string
+  default = null
+}
+variable "enable_loki" {
+  description = "Whether to create an S3 bucket for Loki."
+  type    = bool
+  default = true
+}

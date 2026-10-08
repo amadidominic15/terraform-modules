@@ -12,25 +12,25 @@ locals {
       namespace       = "kube-system"
       service_account = "aws-node"
     }
-
     ebs_csi = {
       namespace       = "kube-system"
       service_account = "ebs-csi-controller-sa"
     }
-
     cloudwatch = {
       namespace       = "amazon-cloudwatch"
       service_account = "cloudwatch-agent"
     }
-
     load_balancer_controller = {
       namespace       = "kube-system"
       service_account = "aws-load-balancer-controller"
     }
-
     external_dns = {
       namespace       = "external-dns"
       service_account = "external-dns"
+    }
+    loki = {
+      namespace       = "loki"
+      service_account = "loki"
     }
   }
 }

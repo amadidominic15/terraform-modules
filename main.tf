@@ -1,11 +1,13 @@
 module "vpc" {
   source               = "./aws-modules/vpc"
   environment          = var.environment
+  aws_region           = var.aws_region
   vpc_cidr             = var.vpc_cidr
   azs_count            = var.azs_count
   enable_nat_gateway   = var.enable_nat_gateway
   single_nat_gateway   = var.single_nat_gateway
   enable_vpc_endpoints = var.enable_vpc_endpoints
+  vpc_endpoint_security_group_id = module.security_group.vpc_endpoint_security_group_id
 }
 
 module "security_group" {
@@ -50,4 +52,17 @@ module "iam" {
   enable_cloudwatch               = true
   enable_load_balancer_controller = true
   enable_external_dns             = true
+  enable_loki                     = true
+  loki_bucket_arn                 = module.s3.loki_bucket_arn
+}
+
+module "s3" {
+  source       = "./aws-modules/s3"
+  cluster_name = var.cluster_name
+  enable_loki  = true
+}
+
+module "ecr" {
+  source = "./aws-modules/ecr"
+  ecr_repositories = var.ecr_repositories
 }

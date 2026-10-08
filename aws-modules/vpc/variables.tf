@@ -11,6 +11,10 @@ variable "environment" {
     description = "name prefix for VPC resources"
     type = string
 }
+variable "aws_region" {
+    description = "aws region to deploy"
+    type = string
+}
 variable "vpc_cidr" {
     description = "CIDR block for VPC"
     type = string
@@ -30,4 +34,9 @@ variable "enable_vpc_endpoints" {
     description = "whether to create VPC endpoints"
     type = bool
     default = true
+}
+variable "vpc_endpoint_security_group_id" {
+  description = "Security group ID attached to VPC interface endpoints."
+  type    = string
+  default = null
 }

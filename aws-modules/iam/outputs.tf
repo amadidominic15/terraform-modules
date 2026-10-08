@@ -10,26 +10,24 @@ output "eks_node_role_arn" {
 
 output "pod_identity_role_arns" {
   description = "IAM role ARNs used by EKS Pod Identity."
-
   value = merge(
     var.enable_vpc_cni ? {
       vpc_cni = aws_iam_role.vpc_cni[0].arn
     } : {},
-
     var.enable_ebs_csi ? {
       ebs_csi = aws_iam_role.ebs_csi[0].arn
     } : {},
-
     var.enable_cloudwatch ? {
       cloudwatch = aws_iam_role.cloudwatch[0].arn
     } : {},
-
     var.enable_load_balancer_controller ? {
       load_balancer_controller = aws_iam_role.load_balancer_controller[0].arn
     } : {},
-
     var.enable_external_dns ? {
       external_dns = aws_iam_role.external_dns[0].arn
+    } : {},
+    var.enable_loki ? {
+      loki = aws_iam_role.loki[0].arn
     } : {}
   )
 }

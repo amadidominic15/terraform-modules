@@ -1,7 +1,7 @@
 variable "aws_region" {
   description = "AWS region to deploy resources"
   type        = string
-  default     = "eu-north-1"
+  default     = ""
 }
 variable "azs_count" {
   description = "Number of availability zones to use"
@@ -53,4 +53,13 @@ variable "cluster_public_access_cidrs" {
 variable "admin_principal_arns" {
   description = "IAM principals that should have EKS cluster administrator access"
   type        = set(string)
+}
+variable "ecr_repositories" {
+  description = "ECR repositories to create."
+  type = map(object({
+    image_tag_mutability = optional(string, "IMMUTABLE")
+    scan_on_push         = optional(bool, true)
+    force_delete         = optional(bool, false)
+  }))
+  default = {}
 }

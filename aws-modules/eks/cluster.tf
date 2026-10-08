@@ -29,7 +29,6 @@ resource "aws_kms_alias" "eks" {
 resource "aws_cloudwatch_log_group" "eks" {
   name              = "/aws/eks/${var.cluster_name}/cluster"
   retention_in_days = 30
-  kms_key_id        = aws_kms_key.eks.arn
 }
 
 resource "aws_eks_cluster" "eks" {

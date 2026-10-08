@@ -50,7 +50,6 @@ resource "aws_eks_node_group" "node_group" {
     workload = "general"
   }
   depends_on = [
-    aws_eks_cluster.eks,
-    aws_eks_addon.eks_addons
+    aws_eks_cluster.eks
   ]
 }

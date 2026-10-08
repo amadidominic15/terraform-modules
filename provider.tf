@@ -2,7 +2,8 @@ terraform {
   backend "s3" {
     bucket  = "terraform-modules-2026"
     key     = "dev/terraform.tfstate"
-    region  = var.aws_region
+    use_lockfile = true
+    region  = "eu-north-1"
     encrypt = true
   }
 
@@ -11,10 +12,13 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
-  tls = {
+    tls = {
       source  = "hashicorp/tls"
       version = "~> 4.0"
     }
   }
 }
 
+provider "aws" { 
+  region = var.aws_region 
+}
