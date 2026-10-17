@@ -40,3 +40,7 @@ variable "vpc_endpoint_security_group_id" {
   type    = string
   default = null
 }
+variable "cluster_name" {
+  description = "Name of cluster"
+  type        = string
+}

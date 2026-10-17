@@ -36,9 +36,25 @@ variable "loki_bucket_arn" {
   description = "ARN of the S3 bucket used by Loki."
   type    = string
   default = null
+  nullable = true
 }
 variable "enable_loki" {
   description = "Whether to create an S3 bucket for Loki."
   type    = bool
-  default = true
+  default = false
+}
+variable "enable_application_secrets" {
+  description = "Whether to create the application secrets access role."
+  type        = bool
+  default     = false
+}
+variable "application_secret_arns" {
+  description = "Exact Secrets Manager ARNs this application can read."
+  type        = list(string)
+  default     = []
+}
+variable "application_secrets_kms_key_arns" {
+  description = "Customer-managed KMS key ARNs required to decrypt secrets."
+  type        = list(string)
+  default     = []
 }

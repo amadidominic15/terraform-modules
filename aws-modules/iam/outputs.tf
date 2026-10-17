@@ -2,12 +2,14 @@ output "eks_cluster_role_arn" {
   description = "IAM role ARN used by the EKS control plane."
   value       = aws_iam_role.eks_cluster.arn
 }
-
 output "eks_node_role_arn" {
   description = "IAM role ARN used by EKS worker nodes."
   value       = aws_iam_role.eks_node.arn
 }
-
+output "application_secrets_role_arn" {
+  description = "IAM role for the application's Secrets Manager access."
+  value       = var.enable_application_secrets ? aws_iam_role.application_secrets[0].arn : null
+}
 output "pod_identity_role_arns" {
   description = "IAM role ARNs used by EKS Pod Identity."
   value = merge(
@@ -28,6 +30,9 @@ output "pod_identity_role_arns" {
     } : {},
     var.enable_loki ? {
       loki = aws_iam_role.loki[0].arn
+    } : {},
+    var.enable_application_secrets ? {
+      application_secrets = aws_iam_role.application_secrets[0].arn
     } : {}
   )
 }

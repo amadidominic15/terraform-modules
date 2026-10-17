@@ -8,5 +8,4 @@ resource "aws_eks_pod_identity_association" "pod_identity" {
   role_arn        = var.pod_identity_role_arns[each.key]
   namespace       = each.value.namespace
   service_account = each.value.service_account
-  depends_on = [ aws_eks_addon.eks_addons ]
 }

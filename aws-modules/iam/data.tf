@@ -39,6 +39,7 @@ data "aws_iam_policy_document" "pod_identity_assume_role" {
 }
 
 data "aws_iam_policy_document" "loki" {
+  count = var.enable_loki ? 1 : 0
   statement {
     effect = "Allow"
     actions = [
@@ -59,5 +60,30 @@ data "aws_iam_policy_document" "loki" {
     resources = [
       "${var.loki_bucket_arn}/*"
     ]
+  }
+}
+
+data "aws_iam_policy_document" "application_secrets" {
+  statement {
+    sid    = "ReadApprovedSecrets"
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:DescribeSecret"
+    ]
+
+    resources = var.application_secret_arns
+  }
+
+  dynamic "statement" {
+    for_each = length(var.application_secrets_kms_key_arns) > 0 ? [1] : []
+
+    content {
+      sid       = "DecryptApprovedSecrets"
+      effect    = "Allow"
+      actions   = ["kms:Decrypt"]
+      resources = var.application_secrets_kms_key_arns
+    }
   }
 }

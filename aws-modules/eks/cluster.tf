@@ -32,7 +32,7 @@ resource "aws_cloudwatch_log_group" "eks" {
 }
 
 resource "aws_eks_cluster" "eks" {
-  name     = var.cluster_name
+  name     = "${var.cluster_name}-${var.environment}-cluster"
   role_arn = var.cluster_role_arn
   version  = var.kubernetes_version
   access_config {
@@ -62,6 +62,11 @@ resource "aws_eks_cluster" "eks" {
     resources = [
       "secrets"
     ]
+  }
+  tags = {
+    Name        = var.cluster_name
+    Environment = var.environment
+    ManagedBy   = "Terraform"
   }
   depends_on = [ aws_cloudwatch_log_group.eks ]
 }

@@ -1,5 +1,6 @@
 module "vpc" {
   source               = "./aws-modules/vpc"
+  cluster_name         = var.cluster_name
   environment          = var.environment
   aws_region           = var.aws_region
   vpc_cidr             = var.vpc_cidr
@@ -13,6 +14,7 @@ module "vpc" {
 module "security_group" {
   source       = "./aws-modules/security-group"
   cluster_name = var.cluster_name
+  environment  = var.environment
   vpc_id       = module.vpc.vpc_id
   vpc_cidr     = var.vpc_cidr
 }
@@ -20,6 +22,7 @@ module "security_group" {
 module "eks" {
   source                      = "./aws-modules/eks"
   cluster_name                = var.cluster_name
+  environment                 = var.environment
   kubernetes_version          = var.kubernetes_version
   cluster_public_access_cidrs = var.cluster_public_access_cidrs
   private_subnet_ids          = module.vpc.private_subnets_ids
@@ -37,11 +40,28 @@ module "eks" {
     eks-pod-identity-agent          = {}
     aws-ebs-csi-driver              = {}
     amazon-cloudwatch-observability = {}
+    metrics-server                  = {}
   }
   node_instance_types = ["t3.medium"]
   node_min_size       = 1
   node_desired_size   = 2
   node_max_size       = 3
+}
+
+module "cluster_addons" {
+  source = "./aws-modules/cluster-addons"
+  cluster_name = var.cluster_name
+  aws_region   = var.aws_region
+  vpc_id       = module.vpc.vpc_id
+  lb_controller_chart_version = var.lb_controller_chart_version
+  argocd_chart_version        = var.argocd_chart_version
+  secrets_store_csi_driver_chart_version = var.secrets_store_csi_driver_chart_version
+  depends_on = [ module.eks ]
+}
+
+module "secrets_manager" {
+  source = "./aws-modules/secrets-manager"
+  secrets = var.secrets
 }
 
 module "iam" {
@@ -54,6 +74,11 @@ module "iam" {
   enable_external_dns             = true
   enable_loki                     = true
   loki_bucket_arn                 = module.s3.loki_bucket_arn
+  enable_application_secrets = true
+  application_secret_arns = [
+    for name in var.application_secret_names :
+    module.secrets_manager.secret_arns[name]
+  ]
 }
 
 module "s3" {
@@ -63,6 +88,6 @@ module "s3" {
 }
 
 module "ecr" {
-  source = "./aws-modules/ecr"
+  source           = "./aws-modules/ecr"
   ecr_repositories = var.ecr_repositories
 }

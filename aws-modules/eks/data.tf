@@ -32,5 +32,9 @@ locals {
       namespace       = "loki"
       service_account = "loki"
     }
+    application_secrets = {
+      namespace       = var.cluster_name
+      service_account = "${var.cluster_name}-secrets-sa"
+    }
   }
 }
