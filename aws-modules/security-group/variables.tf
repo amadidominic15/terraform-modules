@@ -4,11 +4,11 @@ variable "cluster_name" {
 }
 variable "vpc_id" {
   description = "ID of the VPC where the EKS cluster and nodes will be deployed"
-  type = string
+  type        = string
 }
 variable "vpc_cidr" {
   description = "CIDR block of the VPC"
-  type = string
+  type        = string
 }
 variable "environment" {
   description = "Name of environment"

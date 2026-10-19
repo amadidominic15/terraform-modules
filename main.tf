@@ -1,13 +1,13 @@
 module "vpc" {
-  source               = "./aws-modules/vpc"
-  cluster_name         = var.cluster_name
-  environment          = var.environment
-  aws_region           = var.aws_region
-  vpc_cidr             = var.vpc_cidr
-  azs_count            = var.azs_count
-  enable_nat_gateway   = var.enable_nat_gateway
-  single_nat_gateway   = var.single_nat_gateway
-  enable_vpc_endpoints = var.enable_vpc_endpoints
+  source                         = "./aws-modules/vpc"
+  cluster_name                   = var.cluster_name
+  environment                    = var.environment
+  aws_region                     = var.aws_region
+  vpc_cidr                       = var.vpc_cidr
+  azs_count                      = var.azs_count
+  enable_nat_gateway             = var.enable_nat_gateway
+  single_nat_gateway             = var.single_nat_gateway
+  enable_vpc_endpoints           = var.enable_vpc_endpoints
   vpc_endpoint_security_group_id = module.security_group.vpc_endpoint_security_group_id
 }
 
@@ -49,18 +49,18 @@ module "eks" {
 }
 
 module "cluster_addons" {
-  source = "./aws-modules/cluster-addons"
-  cluster_name = var.cluster_name
-  aws_region   = var.aws_region
-  vpc_id       = module.vpc.vpc_id
-  lb_controller_chart_version = var.lb_controller_chart_version
-  argocd_chart_version        = var.argocd_chart_version
+  source                                 = "./aws-modules/cluster-addons"
+  cluster_name                           = var.cluster_name
+  aws_region                             = var.aws_region
+  vpc_id                                 = module.vpc.vpc_id
+  lb_controller_chart_version            = var.lb_controller_chart_version
+  argocd_chart_version                   = var.argocd_chart_version
   secrets_store_csi_driver_chart_version = var.secrets_store_csi_driver_chart_version
-  depends_on = [ module.eks ]
+  depends_on                             = [module.eks]
 }
 
 module "secrets_manager" {
-  source = "./aws-modules/secrets-manager"
+  source  = "./aws-modules/secrets-manager"
   secrets = var.secrets
 }
 
@@ -74,7 +74,7 @@ module "iam" {
   enable_external_dns             = true
   enable_loki                     = true
   loki_bucket_arn                 = module.s3.loki_bucket_arn
-  enable_application_secrets = true
+  enable_application_secrets      = true
   application_secret_arns = [
     for name in var.application_secret_names :
     module.secrets_manager.secret_arns[name]

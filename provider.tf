@@ -1,10 +1,10 @@
 terraform {
   backend "s3" {
-    bucket  = "terraform-modules-2026"
-    key     = "dev/terraform.tfstate"
+    bucket       = "terraform-modules-2026"
+    key          = "dev/terraform.tfstate"
     use_lockfile = true
-    region  = "eu-north-1"
-    encrypt = true
+    region       = "eu-north-1"
+    encrypt      = true
   }
   required_providers {
     aws = {
@@ -12,13 +12,13 @@ terraform {
       version = "~> 6.0"
     }
     helm = {
-      source = "hashicorp/helm"
+      source  = "hashicorp/helm"
       version = "~> 3.0"
     }
   }
 }
-provider "aws" { 
-  region = var.aws_region 
+provider "aws" {
+  region = var.aws_region
 }
 
 provider "helm" {
@@ -30,7 +30,7 @@ provider "helm" {
     exec = {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "aws"
-      args = [ "eks", "get-token", "--cluster-name", var.cluster_name, "--region", var.aws_region ]
+      args        = ["eks", "get-token", "--cluster-name", var.cluster_name, "--region", var.aws_region]
     }
   }
 }

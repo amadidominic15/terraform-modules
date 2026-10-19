@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "ecr" {
-  for_each = var.ecr_repositories
+  for_each             = var.ecr_repositories
   name                 = each.key
   image_tag_mutability = "IMMUTABLE"
   force_delete         = false #protects repositories from Terraform deleting them while they contain images.
@@ -15,13 +15,13 @@ resource "aws_ecr_repository" "ecr" {
 }
 
 resource "aws_ecr_lifecycle_policy" "this" {
-  for_each = var.ecr_repositories
+  for_each   = var.ecr_repositories
   repository = aws_ecr_repository.ecr[each.key].name
   policy = jsonencode({
     rules = [
       {
         rulePriority = 1
-        description = "Keep the last 30 images"
+        description  = "Keep the last 30 images"
         selection = {
           tagStatus   = "any"
           countType   = "imageCountMoreThan"

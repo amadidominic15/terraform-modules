@@ -15,6 +15,6 @@ variable "argocd_chart_version" {}
 variable "secrets_store_csi_driver_chart_version" {}
 variable "secrets" {}
 variable "application_secret_names" {
- description = "Secret names this application's IAM role is allowed to read."
- type        = list(string)
+  description = "Secret names this application's IAM role is allowed to read."
+  type        = list(string)
 }

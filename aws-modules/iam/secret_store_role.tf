@@ -13,7 +13,7 @@ resource "aws_iam_role" "application_secrets" {
 
 
 resource "aws_iam_role_policy" "application_secrets" {
-  count = var.enable_application_secrets ? 1 : 0
+  count  = var.enable_application_secrets ? 1 : 0
   name   = "${var.cluster_name}-application-secrets-policy"
   role   = aws_iam_role.application_secrets[0].id
   policy = data.aws_iam_policy_document.application_secrets.json

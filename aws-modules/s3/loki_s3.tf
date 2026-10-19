@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "s3_bucket" {
-  count = var.enable_loki ? 1 : 0
+  count  = var.enable_loki ? 1 : 0
   bucket = "${var.cluster_name}-terraform-loki-2026"
   tags = {
     Name        = "${var.cluster_name}-loki"
@@ -9,7 +9,7 @@ resource "aws_s3_bucket" "s3_bucket" {
 }
 
 resource "aws_s3_bucket_versioning" "s3_bucket" {
-  count = var.enable_loki ? 1 : 0
+  count  = var.enable_loki ? 1 : 0
   bucket = aws_s3_bucket.s3_bucket[0].id
   versioning_configuration {
     status = "Enabled"
@@ -17,7 +17,7 @@ resource "aws_s3_bucket_versioning" "s3_bucket" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket" {
-  count = var.enable_loki ? 1 : 0
+  count  = var.enable_loki ? 1 : 0
   bucket = aws_s3_bucket.s3_bucket[0].id
   rule {
     apply_server_side_encryption_by_default {
@@ -27,8 +27,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket" {
 }
 
 resource "aws_s3_bucket_public_access_block" "s3_bucket" {
-  count = var.enable_loki ? 1 : 0
-  bucket = aws_s3_bucket.s3_bucket[0].id
+  count                   = var.enable_loki ? 1 : 0
+  bucket                  = aws_s3_bucket.s3_bucket[0].id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true

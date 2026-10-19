@@ -75,7 +75,7 @@ variable "node_instance_types" {
 variable "node_min_size" {
   description = "Minimum number of EC2 worker nodes that the EKS managed node group can scale down to."
   type        = number
-  default = 1
+  default     = 1
 
   validation {
     condition     = var.node_min_size >= 0
@@ -85,7 +85,7 @@ variable "node_min_size" {
 variable "node_desired_size" {
   description = "Desired number of EC2 worker nodes in the EKS managed node group."
   type        = number
-  default = 2
+  default     = 2
 
   validation {
     condition     = var.node_desired_size >= 0
@@ -95,7 +95,7 @@ variable "node_desired_size" {
 variable "node_max_size" {
   description = "Maximum number of EC2 worker nodes that the EKS managed node group can scale up to."
   type        = number
-  default = 3
+  default     = 3
   validation {
     condition     = var.node_max_size >= 0
     error_message = "node_max_size must be greater than or equal to 0."

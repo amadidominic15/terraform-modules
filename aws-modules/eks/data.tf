@@ -1,6 +1,6 @@
 data "aws_caller_identity" "current" {}
 data "aws_eks_addon_version" "eks_addons" {
-  for_each = var.addons
+  for_each           = var.addons
   addon_name         = each.key
   kubernetes_version = var.kubernetes_version
   most_recent        = each.value.most_recent

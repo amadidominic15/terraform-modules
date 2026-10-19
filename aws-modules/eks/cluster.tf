@@ -36,7 +36,7 @@ resource "aws_eks_cluster" "eks" {
   role_arn = var.cluster_role_arn
   version  = var.kubernetes_version
   access_config {
-    authentication_mode = "API_AND_CONFIG_MAP"
+    authentication_mode                         = "API_AND_CONFIG_MAP"
     bootstrap_cluster_creator_admin_permissions = false
   }
   vpc_config {
@@ -46,7 +46,7 @@ resource "aws_eks_cluster" "eks" {
     ]
     endpoint_private_access = true
     endpoint_public_access  = true
-    public_access_cidrs = var.cluster_public_access_cidrs
+    public_access_cidrs     = var.cluster_public_access_cidrs
   }
   enabled_cluster_log_types = [
     "api",
@@ -68,5 +68,5 @@ resource "aws_eks_cluster" "eks" {
     Environment = var.environment
     ManagedBy   = "Terraform"
   }
-  depends_on = [ aws_cloudwatch_log_group.eks ]
+  depends_on = [aws_cloudwatch_log_group.eks]
 }
