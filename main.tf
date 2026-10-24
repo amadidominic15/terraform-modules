@@ -98,7 +98,8 @@ module "ecr" {
 
 module "rds" {
   source                  = "./aws-modules/rds"
-  identifier              = "${var.cluster_name}-postgres"
+  project                 = var.project
+  environment             = var.environment
   rds_engine              = var.rds_engine
   rds_engine_version      = var.rds_engine_version
   rds_instance_class      = var.rds_instance_class
@@ -119,7 +120,6 @@ module "rds" {
     ManagedBy   = "Terraform"
   }
 }
-
 
 module "ecs" {
   source                  = "./aws-modules/ecs"

@@ -1,6 +1,15 @@
-variable "identifier" {
-  description = "Unique RDS DB instance identifier."
+variable "project" {
+  description = "EKS cluster name"
   type        = string
+}
+variable "environment" {
+  description = "Name of environment"
+  type        = string
+}
+variable "skip_final_snapshot" {
+  description = "Whether to skip the final snapshot when deleting the RDS instance."
+  type        = bool
+  default     = false
 }
 variable "rds_engine" {
   description = "Database engine: postgres or mysql."

@@ -1,16 +1,14 @@
 resource "aws_db_subnet_group" "db_subnet_group" {
-  name        = "${var.identifier}-subnet-group"
-  description = "Private subnet group for ${var.identifier}"
+  name        = "${var.project}-${var.environment}-subnet-group"
+  description = "Private subnet group for ${var.project}-${var.environment}-db"
   subnet_ids  = var.private_subnet_ids
-
   tags = merge(var.tags, {
-    Name = "${var.identifier}-subnet-group"
+    Name = "${var.project}-${var.environment}-db-subnet-group"
   })
 }
 
-
 resource "aws_db_instance" "db_instance" {
-  identifier = var.identifier
+  identifier = "${var.project}-${var.environment}-db"
 
   # Database engine
   engine         = var.rds_engine
@@ -47,7 +45,7 @@ resource "aws_db_instance" "db_instance" {
   # Security and lifecycle
   deletion_protection       = var.deletion_protection
   skip_final_snapshot       = false
-  final_snapshot_identifier = "${var.identifier}-final"
+  final_snapshot_identifier = "${var.project}-${var.environment}-db-final"
   delete_automated_backups  = false
 
   # Monitoring
@@ -56,7 +54,7 @@ resource "aws_db_instance" "db_instance" {
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
   apply_immediately               = false # Avoid applying changes to production immediately by default.
   tags = merge(var.tags, {
-    Name = var.identifier
+    Name = "${var.project}-${var.environment}-db-monitoring"
   })
 
   lifecycle {
