@@ -1,8 +1,15 @@
 # ALB security group - public facing
 resource "aws_security_group" "alb_sg" {
   name_prefix = "${var.cluster_name}-alb-sg-"
-  description = "Allow inbound HTTP/HTTPS traffic to the ALB"
+  description = "Security group for the public Application Load Balancer"
   vpc_id      = var.vpc_id
+  tags = {
+    Name        = "${var.cluster_name}-alb-sg"
+    Environment = var.environment
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Allow public HTTP traffic to the ALB.
@@ -25,13 +32,13 @@ resource "aws_vpc_security_group_ingress_rule" "alb_https" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
-# Allow the ALB to forward traffic to ECS tasks.
+# Allow the ALB to forward traffic to both ECS applications.
 resource "aws_vpc_security_group_egress_rule" "alb_to_ecs" {
+  for_each                     = toset(["3000", "3001"])
   security_group_id            = aws_security_group.alb_sg.id
   referenced_security_group_id = aws_security_group.ecs.id
-  description                  = "Allow traffic to ECS application port"
+  description                  = "Allow ALB traffic to ECS application port ${each.value}"
   ip_protocol                  = "tcp"
-  from_port                    = 3000
-  to_port                      = 3000
-
+  from_port                    = tonumber(each.value)
+  to_port                      = tonumber(each.value)
 }

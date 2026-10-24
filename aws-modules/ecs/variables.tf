@@ -18,24 +18,40 @@ variable "private_subnet_ids" {
     error_message = "Provide private subnets in at least two Availability Zones."
   }
 }
+variable "public_subnet_ids" {
+  description = "Public subnet IDs for the internet-facing ALB."
+  type        = list(string)
+
+  validation {
+    condition     = length(var.public_subnet_ids) >= 2
+    error_message = "Provide public subnets in at least two Availability Zones."
+  }
+}
 variable "security_group_ids" {
   description = "Security groups attached to ECS tasks."
   type        = list(string)
 }
+variable "alb_security_group_id" {
+  description = "Security group attached to the ALB."
+  type        = string
+}
+
 variable "services" {
-  description = "Fargate services to deploy."
+  description = "Configuration for ECS Fargate services"
   type = map(object({
     image             = string
     container_port    = number
-    cpu               = optional(number, 256)
-    memory            = optional(number, 512)
-    desired_count     = optional(number, 2)
-    task_role_arn     = optional(string)
-    health_check_path = optional(string, "/health")
+    cpu               = number
+    memory            = number
+    desired_count     = number
+    health_check_path = string
+    path_pattern      = string
+    task_role_arn     = optional(string, null)
     environment       = optional(map(string), {})
     secrets           = optional(map(string), {})
   }))
 }
+
 variable "log_retention_days" {
   description = "CloudWatch log retention period."
   type        = number
@@ -50,8 +66,20 @@ variable "task_execution_role_arn" {
   description = "ARN of the ECS task execution role created by the IAM module"
   type        = string
 }
+variable "vpc_id" {
+  description = "VPC ID used by the ALB target groups."
+  type        = string
+}
 variable "tags" {
   description = "Tags applied to ECS resources"
   type        = map(string)
   default     = {}
+}
+variable "acm_certificate_arn" {
+  type = string
+}
+variable "enable_alb_deletion_protection" {
+  description = "Whether to protect the ALB from accidental deletion."
+  type        = bool
+  default     = true
 }

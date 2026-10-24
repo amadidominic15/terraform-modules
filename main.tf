@@ -58,6 +58,8 @@ module "cluster_addons" {
   lb_controller_chart_version            = var.lb_controller_chart_version
   argocd_chart_version                   = var.argocd_chart_version
   secrets_store_csi_driver_chart_version = var.secrets_store_csi_driver_chart_version
+  deployment_replicas                    = var.deployment_replicas
+  acm_certificate_arn                    = var.acm_certificate_arn
   depends_on                             = [module.eks]
 }
 
@@ -124,11 +126,13 @@ module "ecs" {
   cluster_name            = "${var.project}-${var.environment}"
   environment             = var.environment
   aws_region              = var.aws_region
+  vpc_id                  = module.vpc.vpc_id
   task_execution_role_arn = module.iam.ecs_task_execution_role_arn
   private_subnet_ids      = module.vpc.private_subnets_ids
-  # Create an ECS-specific security group in your
-  # existing security-group module and pass its ID here.
-  security_group_ids = [module.security_group.ecs_security_group_id]
+  public_subnet_ids       = module.vpc.public_subnets_ids
+  acm_certificate_arn     = var.acm_certificate_arn
+  alb_security_group_id   = module.security_group.alb_security_group_id
+  security_group_ids      = [module.security_group.ecs_security_group_id]
   services = {
     catalog = {
       image             = "${module.ecr.repository_urls["catalog"]}:latest"
@@ -137,6 +141,7 @@ module "ecs" {
       memory            = 512
       desired_count     = 2
       health_check_path = "/health"
+      path_pattern      = "/catalog/*"
     }
     orders = {
       image             = "${module.ecr.repository_urls["orders"]}:latest"
@@ -145,6 +150,7 @@ module "ecs" {
       memory            = 512
       desired_count     = 2
       health_check_path = "/health"
+      path_pattern      = "/orders/*"
     }
   }
 
