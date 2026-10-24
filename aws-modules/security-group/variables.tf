@@ -14,3 +14,7 @@ variable "environment" {
   description = "Name of environment"
   type        = string
 }
+variable "alb_security_group_id" {
+  description = "Security group ID of the ALB allowed to reach ECS"
+  type        = string
+}

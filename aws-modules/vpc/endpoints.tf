@@ -5,7 +5,7 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   route_table_ids   = aws_route_table.private[*].id
   tags = {
-    Name = "${var.environment}-s3-endpoint"
+    Name = "${var.project}-${var.environment}-s3-endpoint"
   }
 }
 
@@ -20,7 +20,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
   ]
   private_dns_enabled = true
   tags = {
-    Name = "${var.environment}-ecr-api-endpoint"
+    Name = "${var.project}-${var.environment}-ecr-api-endpoint"
   }
 }
 
@@ -35,6 +35,6 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   ]
   private_dns_enabled = true
   tags = {
-    Name = "${var.environment}-ecr-dkr-endpoint"
+    Name = "${var.project}-${var.environment}-ecr-dkr-endpoint"
   }
 }

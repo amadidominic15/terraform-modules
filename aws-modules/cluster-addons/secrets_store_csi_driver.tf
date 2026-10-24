@@ -1,4 +1,3 @@
-
 resource "helm_release" "secrets_store_csi_driver" {
   name             = "secrets-store-csi-driver-provider-aws"
   repository       = "https://aws.github.io/secrets-store-csi-driver-provider-aws"

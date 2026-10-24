@@ -67,23 +67,30 @@ data "aws_iam_policy_document" "application_secrets" {
   statement {
     sid    = "ReadApprovedSecrets"
     effect = "Allow"
-
     actions = [
       "secretsmanager:GetSecretValue",
       "secretsmanager:DescribeSecret"
     ]
-
     resources = var.application_secret_arns
   }
-
   dynamic "statement" {
     for_each = length(var.application_secrets_kms_key_arns) > 0 ? [1] : []
-
     content {
       sid       = "DecryptApprovedSecrets"
       effect    = "Allow"
       actions   = ["kms:Decrypt"]
       resources = var.application_secrets_kms_key_arns
+    }
+  }
+}
+
+data "aws_iam_policy_document" "ecs_task_execution_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
 }

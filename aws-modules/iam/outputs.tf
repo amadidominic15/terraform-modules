@@ -10,6 +10,10 @@ output "application_secrets_role_arn" {
   description = "IAM role for the application's Secrets Manager access."
   value       = var.enable_application_secrets ? aws_iam_role.application_secrets[0].arn : null
 }
+output "ecs_task_execution_role_arn" {
+  description = "ARN of the ECS task execution role"
+  value       = aws_iam_role.task_execution.arn
+}
 output "pod_identity_role_arns" {
   description = "IAM role ARNs used by EKS Pod Identity."
   value = merge(

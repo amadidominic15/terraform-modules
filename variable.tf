@@ -1,6 +1,7 @@
 variable "aws_region" {}
 variable "azs_count" {}
 variable "environment" {}
+variable "project" {}
 variable "vpc_cidr" {}
 variable "enable_nat_gateway" {}
 variable "single_nat_gateway" {}
@@ -18,3 +19,6 @@ variable "application_secret_names" {
   description = "Secret names this application's IAM role is allowed to read."
   type        = list(string)
 }
+variable "rds_engine" {}
+variable "rds_engine_version" {}
+variable "rds_instance_class" {}

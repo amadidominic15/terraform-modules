@@ -7,6 +7,14 @@ variable "azs_count" {
     error_message = "azs_count must be atleast 1"
   }
 }
+variable "cluster_name" {
+  description = "Name of cluster"
+  type        = string
+}
+variable "project" {
+  description = "Project name"
+  type        = string
+}
 variable "environment" {
   description = "name prefix for VPC resources"
   type        = string
@@ -39,8 +47,4 @@ variable "vpc_endpoint_security_group_id" {
   description = "Security group ID attached to VPC interface endpoints."
   type        = string
   default     = null
-}
-variable "cluster_name" {
-  description = "Name of cluster"
-  type        = string
 }

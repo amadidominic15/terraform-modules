@@ -2,6 +2,7 @@ module "vpc" {
   source                         = "./aws-modules/vpc"
   cluster_name                   = var.cluster_name
   environment                    = var.environment
+  project                        = var.project
   aws_region                     = var.aws_region
   vpc_cidr                       = var.vpc_cidr
   azs_count                      = var.azs_count
@@ -12,11 +13,12 @@ module "vpc" {
 }
 
 module "security_group" {
-  source       = "./aws-modules/security-group"
-  cluster_name = var.cluster_name
-  environment  = var.environment
-  vpc_id       = module.vpc.vpc_id
-  vpc_cidr     = var.vpc_cidr
+  source                = "./aws-modules/security-group"
+  cluster_name          = var.cluster_name
+  environment           = var.environment
+  vpc_id                = module.vpc.vpc_id
+  vpc_cidr              = var.vpc_cidr
+  alb_security_group_id = module.security_group.alb_security_group_id
 }
 
 module "eks" {
@@ -75,19 +77,82 @@ module "iam" {
   enable_loki                     = true
   loki_bucket_arn                 = module.s3.loki_bucket_arn
   enable_application_secrets      = true
-  application_secret_arns = [
-    for name in var.application_secret_names :
-    module.secrets_manager.secret_arns[name]
-  ]
+  application_secret_arns = concat(
+    [for name in var.application_secret_names : module.secrets_manager.secret_arns[name]]
+  )
 }
 
 module "s3" {
   source       = "./aws-modules/s3"
   cluster_name = var.cluster_name
+  environment  = var.environment
   enable_loki  = true
 }
 
 module "ecr" {
   source           = "./aws-modules/ecr"
   ecr_repositories = var.ecr_repositories
+}
+
+module "rds" {
+  source                  = "./aws-modules/rds"
+  identifier              = "${var.cluster_name}-postgres"
+  rds_engine              = var.rds_engine
+  rds_engine_version      = var.rds_engine_version
+  rds_instance_class      = var.rds_instance_class
+  db_name                 = "application"
+  master_username         = "dbadmin"
+  port                    = 5432
+  private_subnet_ids      = module.vpc.private_subnets_ids
+  vpc_security_group_ids  = [module.security_group.rds_security_group_id]
+  allocated_storage       = 20
+  max_allocated_storage   = 100
+  multi_az                = true
+  backup_retention_period = 7
+  deletion_protection     = true
+  monitoring_interval     = 0 # Enhanced Monitoring is disabled until an IAM role is provided.
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+    ManagedBy   = "Terraform"
+  }
+}
+
+
+module "ecs" {
+  source                  = "./aws-modules/ecs"
+  cluster_name            = "${var.project}-${var.environment}"
+  environment             = var.environment
+  aws_region              = var.aws_region
+  task_execution_role_arn = module.iam.ecs_task_execution_role_arn
+  private_subnet_ids      = module.vpc.private_subnets_ids
+  # Create an ECS-specific security group in your
+  # existing security-group module and pass its ID here.
+  security_group_ids = [module.security_group.ecs_security_group_id]
+  services = {
+    catalog = {
+      image             = "${module.ecr.repository_urls["catalog"]}:latest"
+      container_port    = 3000
+      cpu               = 256
+      memory            = 512
+      desired_count     = 2
+      health_check_path = "/health"
+    }
+    orders = {
+      image             = "${module.ecr.repository_urls["orders"]}:latest"
+      container_port    = 3001
+      cpu               = 256
+      memory            = 512
+      desired_count     = 2
+      health_check_path = "/health"
+    }
+  }
+
+  log_retention_days        = 30
+  enable_container_insights = true
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+    ManagedBy   = "Terraform"
+  }
 }

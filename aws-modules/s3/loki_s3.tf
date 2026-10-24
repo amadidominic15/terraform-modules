@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "s3_bucket" {
   count  = var.enable_loki ? 1 : 0
-  bucket = "${var.cluster_name}-terraform-loki-2026"
+  bucket = "${var.cluster_name}-${var.environment}-loki-1026"
   tags = {
     Name        = "${var.cluster_name}-loki"
     Purpose     = "Loki storage"

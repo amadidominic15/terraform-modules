@@ -3,17 +3,17 @@ resource "aws_security_group" "vpc_endpoints" {
   description = "Security group for VPC interface endpoints."
   vpc_id      = var.vpc_id
   tags = {
-    Name = "${var.cluster_name}-vpc-endpoints"
+    Name = "${var.cluster_name}-${var.environment}-vpc-endpoints"
   }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "vpc_endpoints_https" {
-  security_group_id = aws_security_group.vpc_endpoints.id
-  description       = "Allow HTTPS from the VPC."
-  ip_protocol       = "tcp"
-  from_port         = 443
-  to_port           = 443
-  cidr_ipv4         = var.vpc_cidr
+  security_group_id            = aws_security_group.vpc_endpoints.id
+  referenced_security_group_id = aws_security_group.eks_nodes.id
+  description                  = "Allow HTTPS from the VPC."
+  ip_protocol                  = "tcp"
+  from_port                    = 443
+  to_port                      = 443
 }
 
 resource "aws_vpc_security_group_egress_rule" "vpc_endpoints_all" {
