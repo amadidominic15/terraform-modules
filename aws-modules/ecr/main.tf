@@ -1,6 +1,6 @@
 resource "aws_ecr_repository" "ecr" {
   for_each             = var.repository_names
-  name                 = "${var.name_prefix}-${each.value}"
+  name                 = "${var.project}-${each.value}"
   image_tag_mutability = "IMMUTABLE"
   force_delete         = false #protects repositories from Terraform deleting them while they contain images.
   image_scanning_configuration {
@@ -10,7 +10,7 @@ resource "aws_ecr_repository" "ecr" {
     encryption_type = "AES256"
   }
   tags = {
-    Name = "${var.name_prefix}-${each.value}"
+    Name = "${var.project}-${each.value}"
   }
 }
 
