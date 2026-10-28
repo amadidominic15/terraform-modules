@@ -1,5 +1,4 @@
 aws_region                             = "eu-north-1"
-cluster_name                           = "cloudkitchen" #use app name or project name to make it unique.
 environment                            = "dev"
 project                                = "cloudkitchen"
 kubernetes_version                     = "1.37"
@@ -10,7 +9,7 @@ single_nat_gateway                     = true
 enable_vpc_endpoints                   = true
 admin_principal_arns                   = ["arn:aws:iam::092620891680:user/admin"] #put the user arn of the user you want to have admin access to the cluster
 acm_certificate_arn                    = "arn:aws:acm:eu-north-1:092620891680:certificate/23dedb1b-67b7-414e-8d2d-a521d4ed1dee"
-ecr_repositories                       = ["catalog", "orders"]
+repository_names                       = ["catalog", "orders"]
 cluster_public_access_cidrs            = ["0.0.0.0/0"] #use this to restrict access to the EKS API endpoint. For example, you can use your office IP address or VPN IP address. 
 lb_controller_chart_version            = "3.6.0"
 argocd_chart_version                   = "10.10.3"

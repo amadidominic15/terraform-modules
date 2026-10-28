@@ -1,9 +1,9 @@
-variable "cluster_name" {
-  description = "Name of the EKS cluster."
+variable "name_prefix" {
+  description = "Common prefix for resource names"
   type        = string
 }
 variable "aws_region" {
-  description = "AWS region containing the EKS cluster."
+  description = "AWS deployment region"
   type        = string
 }
 variable "vpc_id" {
@@ -31,4 +31,9 @@ variable "envoy_gateway_version" {
 }
 variable "deployment_replicas" {
   type = number
+}
+variable "tags" {
+  description = "Tags applied to supported resources."
+  type        = map(string)
+  default     = {}
 }

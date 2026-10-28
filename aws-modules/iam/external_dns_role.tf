@@ -1,6 +1,6 @@
 resource "aws_iam_policy" "external_dns" {
   count       = var.enable_external_dns ? 1 : 0
-  name        = "${var.cluster_name}-external-dns-policy"
+  name        = "${var.name_prefix}-external-dns-policy"
   description = "IAM policy for ExternalDNS"
   policy = jsonencode({
     Version = "2012-10-17"
@@ -27,10 +27,10 @@ resource "aws_iam_policy" "external_dns" {
 
 resource "aws_iam_role" "external_dns" {
   count              = var.enable_external_dns ? 1 : 0
-  name               = "${var.cluster_name}-external-dns-role"
+  name               = "${var.name_prefix}-external-dns-role"
   assume_role_policy = data.aws_iam_policy_document.pod_identity_assume_role.json
   tags = {
-    Name = "${var.cluster_name}-external-dns-role"
+    Name = "${var.name_prefix}-external-dns-role"
   }
 }
 

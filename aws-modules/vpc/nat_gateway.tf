@@ -4,6 +4,6 @@ resource "aws_nat_gateway" "main" {
   count         = var.enable_nat_gateway ? (var.single_nat_gateway ? 1 : local.azs_count) : 0
   depends_on    = [aws_internet_gateway.main]
   tags = {
-    Name = "${var.project}-${var.environment}-nat-${count.index + 1}"
+    Name = "${var.name_prefix}-nat-${count.index + 1}"
   }
 }

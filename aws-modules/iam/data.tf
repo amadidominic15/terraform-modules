@@ -46,9 +46,7 @@ data "aws_iam_policy_document" "loki" {
       "s3:ListBucket",
       "s3:GetBucketLocation"
     ]
-    resources = [
-      var.loki_bucket_arn
-    ]
+    resources = var.loki_bucket_arn
   }
   statement {
     effect = "Allow"
@@ -57,9 +55,7 @@ data "aws_iam_policy_document" "loki" {
       "s3:GetObject",
       "s3:DeleteObject"
     ]
-    resources = [
-      "${var.loki_bucket_arn}/*"
-    ]
+    resources = [ for arn in var.loki_bucket_arn : "${arn}/*" ]
   }
 }
 

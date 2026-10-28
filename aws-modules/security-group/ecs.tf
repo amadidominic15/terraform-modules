@@ -1,25 +1,21 @@
 resource "aws_security_group" "ecs" {
-  name_prefix = "${var.cluster_name}-ecs-sg"
-  description = "Security group for ECS tasks"
+  name        = "${var.name_prefix}-ecs-sg"
+  description = "Allow application traffic from the ALB only"
   vpc_id      = var.vpc_id
   tags = {
-    Name        = "${var.cluster_name}-ecs-sg"
-    Environment = var.environment
-  }
-  lifecycle {
-    create_before_destroy = true
+    Name = "${var.name_prefix}-ecs-sg"
   }
 }
 
 # Allow ECS application traffic only from the ALB.
 resource "aws_vpc_security_group_ingress_rule" "ecs_from_alb" {
-  for_each                     = toset(["3000", "3001"])
+  for_each                     = { for port in var.application_ports : tostring(port) => port }
   security_group_id            = aws_security_group.ecs.id
   referenced_security_group_id = aws_security_group.alb_sg.id
   description                  = "Allow application traffic from ALB on port ${each.value}"
   ip_protocol                  = "tcp"
-  from_port                    = tonumber(each.value)
-  to_port                      = tonumber(each.value)
+  from_port                    = each.value
+  to_port                      = each.value
 }
 
 # Restrict this further when application dependencies and endpoints are known.

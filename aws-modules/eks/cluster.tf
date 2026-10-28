@@ -17,22 +17,22 @@ resource "aws_kms_key" "eks" {
     ]
   })
   tags = {
-    Name = "${var.cluster_name}-eks-kms"
+    Name = "${var.name_prefix}-eks-kms"
   }
 }
 
 resource "aws_kms_alias" "eks" {
-  name          = "alias/${var.cluster_name}-eks"
+  name          = "alias/${var.name_prefix}-eks"
   target_key_id = aws_kms_key.eks.key_id
 }
 
 resource "aws_cloudwatch_log_group" "eks" {
-  name              = "/aws/eks/${var.cluster_name}/cluster"
+  name              = "/aws/eks/${var.name_prefix}/cluster"
   retention_in_days = 30
 }
 
 resource "aws_eks_cluster" "eks" {
-  name     = "${var.cluster_name}-${var.environment}-cluster"
+  name     = "${var.name_prefix}-eks"
   role_arn = var.cluster_role_arn
   version  = var.kubernetes_version
   access_config {
@@ -64,9 +64,7 @@ resource "aws_eks_cluster" "eks" {
     ]
   }
   tags = {
-    Name        = var.cluster_name
-    Environment = var.environment
-    ManagedBy   = "Terraform"
+    Name = "${var.name_prefix}-eks"
   }
   depends_on = [aws_cloudwatch_log_group.eks]
 }

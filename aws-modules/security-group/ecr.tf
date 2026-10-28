@@ -1,9 +1,9 @@
 resource "aws_security_group" "vpc_endpoints" {
-  name        = "${var.cluster_name}-vpc-endpoints"
+  name        = "${var.name_prefix}-vpc-endpoints"
   description = "Security group for VPC interface endpoints."
   vpc_id      = var.vpc_id
   tags = {
-    Name = "${var.cluster_name}-${var.environment}-vpc-endpoints"
+    Name = "${var.name_prefix}-vpc-endpoints"
   }
 }
 

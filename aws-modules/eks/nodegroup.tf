@@ -1,5 +1,5 @@
 resource "aws_launch_template" "nodes" {
-  name_prefix            = "${var.cluster_name}-nodes-"
+  name_prefix            = "${var.name_prefix}-eks-nodes"
   vpc_security_group_ids = [var.node_security_group_id]
   block_device_mappings {
     device_name = "/dev/xvda"
@@ -13,14 +13,14 @@ resource "aws_launch_template" "nodes" {
   tag_specifications {
     resource_type = "instance"
     tags = {
-      Name = "${var.cluster_name}-node"
+      Name = "${var.name_prefix}-eks-node"
     }
   }
 }
 
 resource "aws_eks_node_group" "node_group" {
   cluster_name    = aws_eks_cluster.eks.name
-  node_group_name = "${var.cluster_name}-managed-ng"
+  node_group_name = "${var.name_prefix}-managed-ng"
   node_role_arn   = var.node_role_arn
   subnet_ids      = var.private_subnet_ids
   capacity_type   = "ON_DEMAND"

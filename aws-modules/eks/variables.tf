@@ -1,9 +1,9 @@
-variable "cluster_name" {
-  description = "EKS cluster name"
+variable "name_prefix" {
+  description = "Common prefix for resource names"
   type        = string
 }
-variable "environment" {
-  description = "Name of environment"
+variable "project" {
+  description = "Project name"
   type        = string
 }
 variable "kubernetes_version" {
@@ -101,4 +101,8 @@ variable "node_max_size" {
     error_message = "node_max_size must be greater than or equal to 0."
   }
 }
-
+variable "tags" {
+  description = "Tags applied to supported resources."
+  type        = map(string)
+  default     = {}
+}

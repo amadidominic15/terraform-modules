@@ -1,9 +1,5 @@
-variable "project" {
-  description = "EKS cluster name"
-  type        = string
-}
-variable "environment" {
-  description = "Name of environment"
+variable "name_prefix" {
+  description = "Common prefix for resource names"
   type        = string
 }
 variable "skip_final_snapshot" {

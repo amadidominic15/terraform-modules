@@ -1,9 +1,9 @@
 resource "aws_iam_role" "cloudwatch" {
   count              = var.enable_cloudwatch ? 1 : 0
-  name               = "${var.cluster_name}-cloudwatch-role"
+  name               = "${var.name_prefix}-cloudwatch-role"
   assume_role_policy = data.aws_iam_policy_document.pod_identity_assume_role.json
   tags = {
-    Name = "${var.cluster_name}-cloudwatch-role"
+    Name = "${var.name_prefix}-cloudwatch-role"
   }
 }
 

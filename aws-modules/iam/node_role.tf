@@ -1,8 +1,8 @@
 resource "aws_iam_role" "eks_node" {
-  name               = "${var.cluster_name}-eks-node-role"
+  name               = "${var.name_prefix}-eks-node-role"
   assume_role_policy = data.aws_iam_policy_document.eks_node_assume_role.json
   tags = {
-    Name = "${var.cluster_name}-eks-node-role"
+    Name = "${var.name_prefix}-eks-node-role"
   }
 }
 

@@ -1,11 +1,10 @@
 
 resource "aws_security_group" "rds" {
-  name_prefix = "${var.cluster_name}-rds-"
+  name        = "${var.name_prefix}-rds-sg"
   description = "Private RDS access from EKS nodes"
   vpc_id      = var.vpc_id
   tags = {
-    Name        = "${var.cluster_name}-rds-sg"
-    Environment = var.environment
+    Name = "${var.name_prefix}-rds-sg"
   }
   lifecycle {
     create_before_destroy = true

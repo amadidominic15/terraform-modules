@@ -1,9 +1,9 @@
 resource "aws_iam_role" "vpc_cni" {
   count              = var.enable_vpc_cni ? 1 : 0
-  name               = "${var.cluster_name}-vpc-cni-role"
+  name               = "${var.name_prefix}-vpc-cni-role"
   assume_role_policy = data.aws_iam_policy_document.pod_identity_assume_role.json
   tags = {
-    Name = "${var.cluster_name}-vpc-cni-role"
+    Name = "${var.name_prefix}-vpc-cni-role"
   }
 }
 

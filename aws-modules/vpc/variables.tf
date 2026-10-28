@@ -7,20 +7,16 @@ variable "azs_count" {
     error_message = "azs_count must be atleast 1"
   }
 }
-variable "cluster_name" {
-  description = "Name of cluster"
-  type        = string
-}
-variable "project" {
-  description = "Project name"
+variable "name_prefix" {
+  description = "Common prefix for resource names"
   type        = string
 }
 variable "environment" {
-  description = "name prefix for VPC resources"
+  description = "deployment environment"
   type        = string
 }
-variable "aws_region" {
-  description = "aws region to deploy"
+variable "project" {
+  description = "Project Name"
   type        = string
 }
 variable "vpc_cidr" {
@@ -47,4 +43,9 @@ variable "vpc_endpoint_security_group_id" {
   description = "Security group ID attached to VPC interface endpoints."
   type        = string
   default     = null
+}
+variable "tags" {
+  description = "Tags applied to vpc resources."
+  type        = map(string)
+  default     = {}
 }

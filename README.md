@@ -55,7 +55,7 @@ For example:
 
 ```hcl
 module "vpc" {
-  source  = "github.com/my-org/terraform-modules//modules/vpc"
+  source  = "github.com/my-org/terraform-modules//aws-modules/vpc"
   version = "v1.2.0"
 }
 ```
@@ -86,11 +86,17 @@ terraform-modules/
 ├── modules/
 │   ├── vpc/
 │   ├── eks/
+│   └── ecs/
+│   └── ec2/
+|   └── rds/
+|   └── lb/
 │   ├── iam/
 │   ├── ecr/
 │   ├── s3/
 │   ├── security-group/
-│   └── load-balancer-controller/
+│   └── cluster-addons/
+│   └── secret-manager/
+|   └── cloudfront/
 └── README.md
 ```
 

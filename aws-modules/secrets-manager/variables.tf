@@ -15,3 +15,8 @@ variable "secrets" {
     error_message = "Recovery window must be between 7 and 30 days."
   }
 }
+variable "tags" {
+  description = "Tags applied to secret manager resources."
+  type        = map(string)
+  default     = {}
+}

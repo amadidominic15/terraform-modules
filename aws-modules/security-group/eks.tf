@@ -2,12 +2,11 @@
 # EKS CLUSTER SECURITY GROUP
 # ============================================================
 resource "aws_security_group" "eks_cluster" {
-  name        = "${var.cluster_name}-cluster-sg"
+  name        = "${var.name_prefix}-eks-cluster-sg"
   description = "Security group for EKS control plane"
   vpc_id      = var.vpc_id
-
   tags = {
-    Name = "${var.cluster_name}-${var.environment}-cluster-sg"
+    Name = "${var.name_prefix}-eks-cluster-sg"
   }
 }
 
@@ -15,12 +14,12 @@ resource "aws_security_group" "eks_cluster" {
 # EKS NODE SECURITY GROUP
 # ============================================================
 resource "aws_security_group" "eks_nodes" {
-  name        = "${var.cluster_name}-nodes-sg"
+  name        = "${var.name_prefix}-eks-nodes-sg"
   description = "Security group for EKS worker nodes"
   vpc_id      = var.vpc_id
   tags = {
-    Name                     = "${var.cluster_name}-${var.environment}-nodes-sg"
-    "karpenter.sh/discovery" = "${var.cluster_name}-${var.environment}-cluster"
+    Name                     = "${var.name_prefix}-eks-nodes-sg"
+    "karpenter.sh/discovery" = "${var.name_prefix}-eks-cluster-sg"
   }
 }
 

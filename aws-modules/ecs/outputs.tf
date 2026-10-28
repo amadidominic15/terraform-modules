@@ -8,11 +8,15 @@ output "cluster_arn" {
 }
 output "service_names" {
   description = "Names of the ECS services."
-  value       = { for name, service in aws_ecs_service.service : name => service.name }
+  value       = { for key, service in aws_ecs_service.service : key => service.name }
 }
 output "service_arns" {
   description = "ARNs of the ECS services."
-  value       = { for name, service in aws_ecs_service.service : name => service.id }
+  value       = { for key, service in aws_ecs_service.service : key => service.id }
+}
+output "task_definition_arns" {
+  value = {
+  for key, task in aws_ecs_task_definition.service : key => task.arn }
 }
 output "ecs_task_execution_role_arn" {
   description = "ARN of the ECS task execution role."

@@ -1,20 +1,22 @@
-variable "cluster_name" {
-  description = "Name of the EKS cluster (used for resource naming)"
+variable "name_prefix" {
+  description = "Common prefix for resource names"
   type        = string
 }
 variable "vpc_id" {
   description = "ID of the VPC where the EKS cluster and nodes will be deployed"
   type        = string
 }
-variable "vpc_cidr" {
-  description = "CIDR block of the VPC"
-  type        = string
+variable "alb_ingress_cidrs" {
+  description = "CIDRs allowed to reach the public ALB."
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
 }
-variable "environment" {
-  description = "Name of environment"
-  type        = string
+variable "application_ports" {
+  description = "Container ports allowed from the ALB to ECS."
+  type        = set(number)
 }
-variable "alb_security_group_id" {
-  description = "Security group ID of the ALB allowed to reach ECS"
-  type        = string
+variable "tags" {
+  description = "Tags applied to security group resources."
+  type        = map(string)
+  default     = {}
 }

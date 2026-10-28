@@ -11,7 +11,7 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   values = [
     yamlencode({
-      clusterName = var.cluster_name
+      clusterName = "${var.name_prefix}-eks"
       region      = var.aws_region
       vpcId       = var.vpc_id
 

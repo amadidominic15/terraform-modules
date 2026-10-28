@@ -1,7 +1,7 @@
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
   tags = {
-    Name = "${var.project}-${var.environment}-public-rt"
+    Name = "${var.name_prefix}-public-rt"
   }
 }
 

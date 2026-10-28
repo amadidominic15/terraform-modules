@@ -1,9 +1,7 @@
 module "vpc" {
   source                         = "./aws-modules/vpc"
-  cluster_name                   = var.cluster_name
-  environment                    = var.environment
-  project                        = var.project
-  aws_region                     = var.aws_region
+  name_prefix                    = local.name_prefix
+  environment                    = var.environment 
   vpc_cidr                       = var.vpc_cidr
   azs_count                      = var.azs_count
   enable_nat_gateway             = var.enable_nat_gateway
@@ -13,18 +11,28 @@ module "vpc" {
 }
 
 module "security_group" {
-  source                = "./aws-modules/security-group"
-  cluster_name          = var.cluster_name
-  environment           = var.environment
-  vpc_id                = module.vpc.vpc_id
-  vpc_cidr              = var.vpc_cidr
-  alb_security_group_id = module.security_group.alb_security_group_id
+  source            = "./aws-modules/security-group"
+  name_prefix       = local.name_prefix
+  vpc_id            = module.vpc.vpc_id
+  application_ports = local.application_ports
+  alb_ingress_cidrs = ["0.0.0.0/0"]
+}
+
+module "alb" {
+  source                     = "./aws-modules/alb"
+  name_prefix                = local.name_prefix
+  vpc_id                     = module.vpc.vpc_id
+  public_subnet_ids          = module.vpc.public_subnets_ids
+  security_group_id          = module.security_group.alb_security_group_id
+  acm_certificate_arn        = var.acm_certificate_arn
+  services                   = local.alb_services
+  enable_deletion_protection = true
 }
 
 module "eks" {
   source                      = "./aws-modules/eks"
-  cluster_name                = var.cluster_name
-  environment                 = var.environment
+  name_prefix                 = local.name_prefix
+  project                     = var.project
   kubernetes_version          = var.kubernetes_version
   cluster_public_access_cidrs = var.cluster_public_access_cidrs
   private_subnet_ids          = module.vpc.private_subnets_ids
@@ -52,7 +60,7 @@ module "eks" {
 
 module "cluster_addons" {
   source                                 = "./aws-modules/cluster-addons"
-  cluster_name                           = var.cluster_name
+  name_prefix                            = local.name_prefix
   aws_region                             = var.aws_region
   vpc_id                                 = module.vpc.vpc_id
   lb_controller_chart_version            = var.lb_controller_chart_version
@@ -70,36 +78,59 @@ module "secrets_manager" {
 
 module "iam" {
   source                          = "./aws-modules/iam"
-  cluster_name                    = var.cluster_name
+  name_prefix                     = local.name_prefix
   enable_vpc_cni                  = true
   enable_ebs_csi                  = true
   enable_cloudwatch               = true
   enable_load_balancer_controller = true
   enable_external_dns             = true
   enable_loki                     = true
-  loki_bucket_arn                 = module.s3.loki_bucket_arn
-  enable_application_secrets      = true
+  loki_bucket_arn = [
+    module.s3.bucket_arns["loki_chunks"], module.s3.bucket_arns["loki_ruler"]
+  ]
+  enable_application_secrets = true
   application_secret_arns = concat(
     [for name in var.application_secret_names : module.secrets_manager.secret_arns[name]]
   )
 }
 
 module "s3" {
-  source       = "./aws-modules/s3"
-  cluster_name = var.cluster_name
-  environment  = var.environment
-  enable_loki  = true
+  source      = "./aws-modules/s3"
+  name_prefix = local.name_prefix
+  environment = var.environment
+  buckets = {
+    loki_chunks = {
+      bucket_name        = "${local.name_prefix}-loki-chunks-1026"
+      purpose            = "Loki chunks storage"
+      versioning_enabled = true
+      enable_encryption  = true
+      tags = {
+        Name     = "${local.name_prefix}-loki-chunks"
+        Workload = "Loki"
+      }
+    }
+    loki_ruler = {
+      bucket_name        = "${local.name_prefix}-loki-ruler-1026"
+      purpose            = "Loki ruler storage"
+      versioning_enabled = true
+      enable_encryption  = true
+      tags = {
+        Name     = "${local.name_prefix}-loki-chunks"
+        Workload = "Loki"
+      }
+    }
+  }
 }
 
 module "ecr" {
   source           = "./aws-modules/ecr"
-  ecr_repositories = var.ecr_repositories
+  name_prefix      = local.name_prefix
+  repository_names = var.repository_names
 }
 
 module "rds" {
   source                  = "./aws-modules/rds"
-  project                 = var.project
-  environment             = var.environment
+  name_prefix             = local.name_prefix
   rds_engine              = var.rds_engine
   rds_engine_version      = var.rds_engine_version
   rds_instance_class      = var.rds_instance_class
@@ -114,51 +145,17 @@ module "rds" {
   backup_retention_period = 7
   deletion_protection     = true
   monitoring_interval     = 0 # Enhanced Monitoring is disabled until an IAM role is provided.
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-    ManagedBy   = "Terraform"
-  }
 }
 
 module "ecs" {
-  source                  = "./aws-modules/ecs"
-  cluster_name            = "${var.project}-${var.environment}"
-  environment             = var.environment
-  aws_region              = var.aws_region
-  vpc_id                  = module.vpc.vpc_id
-  task_execution_role_arn = module.iam.ecs_task_execution_role_arn
-  private_subnet_ids      = module.vpc.private_subnets_ids
-  public_subnet_ids       = module.vpc.public_subnets_ids
-  acm_certificate_arn     = var.acm_certificate_arn
-  alb_security_group_id   = module.security_group.alb_security_group_id
-  security_group_ids      = [module.security_group.ecs_security_group_id]
-  services = {
-    catalog = {
-      image             = "${module.ecr.repository_urls["catalog"]}:latest"
-      container_port    = 3000
-      cpu               = 256
-      memory            = 512
-      desired_count     = 2
-      health_check_path = "/health"
-      path_pattern      = "/catalog/*"
-    }
-    orders = {
-      image             = "${module.ecr.repository_urls["orders"]}:latest"
-      container_port    = 3001
-      cpu               = 256
-      memory            = 512
-      desired_count     = 2
-      health_check_path = "/health"
-      path_pattern      = "/orders/*"
-    }
-  }
-
+  source                    = "./aws-modules/ecs"
+  name_prefix               = local.name_prefix
+  aws_region                = var.aws_region
+  task_execution_role_arn   = module.iam.ecs_task_execution_role_arn
+  target_group_arns         = module.alb.target_group_arns
+  private_subnet_ids        = module.vpc.private_subnets_ids
+  security_group_ids        = [module.security_group.ecs_security_group_id]
+  services                  = local.services
   log_retention_days        = 30
   enable_container_insights = true
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-    ManagedBy   = "Terraform"
-  }
 }
