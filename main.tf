@@ -1,6 +1,7 @@
 module "vpc" {
   source                         = "./aws-modules/vpc"
   name_prefix                    = local.name_prefix
+  project                        = var.project 
   environment                    = var.environment 
   vpc_cidr                       = var.vpc_cidr
   azs_count                      = var.azs_count
