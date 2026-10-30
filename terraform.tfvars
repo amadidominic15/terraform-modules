@@ -15,8 +15,8 @@ lb_controller_chart_version            = "3.6.0"
 argocd_chart_version                   = "10.10.3"
 secrets_store_csi_driver_chart_version = "3.1.4"
 envoy_gateway_version                  = 1.9
-secrets                                = { "production/cloudkitchen/application" = {} }
-application_secret_names               = ["production/cloudkitchen/application"]
+secrets                                = { "dev/cloudkitchen/application" = {} }
+application_secret_names               = ["dev/cloudkitchen/application"]
 rds_engine                             = "postgres"
 rds_engine_version                     = "18.3"
 rds_instance_class                     = "db.t3.meduim"

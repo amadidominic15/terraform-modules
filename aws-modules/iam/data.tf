@@ -55,7 +55,7 @@ data "aws_iam_policy_document" "loki" {
       "s3:GetObject",
       "s3:DeleteObject"
     ]
-    resources = [ for arn in var.loki_bucket_arn : "${arn}/*" ]
+    resources = [for arn in var.loki_bucket_arn : "${arn}/*"]
   }
 }
 
