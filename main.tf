@@ -1,8 +1,8 @@
 module "vpc" {
   source                         = "./aws-modules/vpc"
   name_prefix                    = local.name_prefix
-  project                        = var.project 
-  environment                    = var.environment 
+  project                        = var.project
+  environment                    = var.environment
   vpc_cidr                       = var.vpc_cidr
   azs_count                      = var.azs_count
   enable_nat_gateway             = var.enable_nat_gateway
@@ -12,19 +12,19 @@ module "vpc" {
 }
 
 module "security_group" {
-  source = "./aws-modules/security-group"
-  name_prefix = local.name_prefix
-  vpc_id      = module.vpc.vpc_id
-  create_eks_security_group             = true
-  create_vpc_endpoints_security_group   = true
-  create_rds_security_group             = true
-  create_alb_security_group = true
-  create_ecs_security_group = true
-  application_ports = local.application_ports
-  vpc_endpoints_allow_eks_nodes = true
-  rds_allow_eks_nodes           = true
-  alb_ingress_cidrs = ["0.0.0.0/0"]
-  database_ports = [5432]
+  source                              = "./aws-modules/security-group"
+  name_prefix                         = local.name_prefix
+  vpc_id                              = module.vpc.vpc_id
+  create_eks_security_group           = true
+  create_vpc_endpoints_security_group = true
+  create_rds_security_group           = true
+  create_alb_security_group           = true
+  create_ecs_security_group           = true
+  application_ports                   = local.application_ports
+  vpc_endpoints_allow_eks_nodes       = true
+  rds_allow_eks_nodes                 = true
+  alb_ingress_cidrs                   = ["0.0.0.0/0"]
+  database_ports                      = [5432]
 }
 
 module "alb" {
@@ -76,7 +76,6 @@ module "cluster_addons" {
   argocd_chart_version                   = var.argocd_chart_version
   secrets_store_csi_driver_chart_version = var.secrets_store_csi_driver_chart_version
   deployment_replicas                    = var.deployment_replicas
-  acm_certificate_arn                    = var.acm_certificate_arn
   depends_on                             = [module.eks]
 }
 
@@ -133,7 +132,7 @@ module "s3" {
 
 module "ecr" {
   source           = "./aws-modules/ecr"
-  project      = var.project
+  project          = var.project
   repository_names = var.repository_names
 }
 
