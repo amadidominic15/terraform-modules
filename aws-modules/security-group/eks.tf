@@ -66,6 +66,17 @@ resource "aws_vpc_security_group_ingress_rule" "cluster_to_nodes_kubelet" {
   description                  = "Allow EKS control plane to communicate with kubelets"
 }
 
+# Cluster -> Nodes (Metrics Server)
+resource "aws_vpc_security_group_ingress_rule" "cluster_to_nodes_metrics_server" {
+  count                        = var.create_eks_security_group ? 1 : 0
+  security_group_id            = aws_security_group.eks_nodes[0].id
+  referenced_security_group_id = aws_security_group.eks_cluster[0].id
+  from_port   = 10251
+  to_port     = 10251
+  ip_protocol = "tcp"
+  description = "Allow EKS control plane to reach Metrics Server"
+}
+
 # Cluster -> Nodes (HTTPS)
 resource "aws_vpc_security_group_ingress_rule" "cluster_to_nodes_https" {
   count                        = var.create_eks_security_group ? 1 : 0
