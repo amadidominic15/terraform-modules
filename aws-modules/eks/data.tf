@@ -34,7 +34,7 @@ locals {
     }
     application_secrets = {
       namespace       = var.project
-      service_account = "${var.name_prefix}secrets-sa"
+      service_account = "${var.project}secrets-sa"
     }
   }
 }

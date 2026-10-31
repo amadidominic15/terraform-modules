@@ -9,4 +9,5 @@ resource "helm_release" "argocd" {
   wait             = true
   wait_for_jobs    = true
   timeout          = 600
+  depends_on = [helm_release.aws_load_balancer_controller]
 }

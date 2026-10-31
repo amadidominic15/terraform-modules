@@ -27,4 +27,5 @@ resource "helm_release" "envoy_gateway" {
       }
     })
   ]
+  depends_on = [helm_release.aws_load_balancer_controller]
 }
