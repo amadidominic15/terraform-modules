@@ -5,14 +5,13 @@ variable "secrets" {
     kms_key_id              = optional(string)
     recovery_window_in_days = optional(number, 30)
   }))
-
   validation {
     condition = alltrue([
       for secret in values(var.secrets) :
-      secret.recovery_window_in_days >= 7 &&
-      secret.recovery_window_in_days <= 30
+      secret.recovery_window_in_days == 0 ||
+      (secret.recovery_window_in_days >= 7 && secret.recovery_window_in_days <= 30)
     ])
-    error_message = "Recovery window must be between 7 and 30 days."
+    error_message = "Recovery window must be 0 (force delete without recovery) or between 7 and 30 days."
   }
 }
 variable "tags" {

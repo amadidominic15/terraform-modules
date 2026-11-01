@@ -2,7 +2,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
   count  = local.azs_count
   tags = {
-    Name = "${var.environment}-${var.project}-private-rt-${local.azs[count.index]}"
+    Name = "${var.name_prefix}-private-rt-${local.azs[count.index]}"
   }
 }
 
