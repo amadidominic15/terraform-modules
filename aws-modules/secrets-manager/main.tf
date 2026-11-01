@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "secret_manager" {
-  for_each = var.secrets
+  for_each                = var.secrets
   name                    = each.key
   description             = each.value.description
   kms_key_id              = each.value.kms_key_id
