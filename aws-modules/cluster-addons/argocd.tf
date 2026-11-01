@@ -1,4 +1,3 @@
-
 resource "helm_release" "argocd" {
   name             = "argocd"
   repository       = "https://argoproj.github.io/argo-helm"
@@ -9,5 +8,19 @@ resource "helm_release" "argocd" {
   wait             = true
   wait_for_jobs    = true
   timeout          = 600
-  depends_on       = [helm_release.aws_load_balancer_controller]
+  values = [
+    yamlencode({
+      configs = {
+        params = {
+          "server.insecure" = true # Argo CD receives HTTP from Envoy.
+        }
+      }
+      server = {
+        service = {
+          type = "ClusterIP" # Keep Argo CD internal. Envoy Gateway handles external traffic.
+        }
+      }
+    })
+  ]
+  depends_on = [helm_release.aws_load_balancer_controller]
 }
