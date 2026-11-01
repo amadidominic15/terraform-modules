@@ -134,6 +134,7 @@ module "ecr" {
   source           = "./aws-modules/ecr"
   project          = var.project
   repository_names = var.repository_names
+  force_delete = true
 }
 
 module "rds" {

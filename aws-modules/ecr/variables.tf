@@ -7,6 +7,11 @@ variable "repository_names" {
   type        = set(string)
   default     = []
 }
+variable "force_delete" {
+  description = "Whether to force-delete ECR repositories containing images."
+  type        = bool
+  default     = false
+}
 variable "tags" {
   description = "Tags applied to supported resources."
   type        = map(string)
