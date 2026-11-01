@@ -77,6 +77,17 @@ resource "aws_vpc_security_group_ingress_rule" "cluster_to_nodes_metrics_server"
   description                  = "Allow EKS control plane to reach Metrics Server"
 }
 
+# Cluster -> Nodes (AWS Load Balancer Controller webhook)
+resource "aws_vpc_security_group_ingress_rule" "cluster_to_nodes_lbc_webhook" {
+  count                        = var.create_eks_security_group ? 1 : 0
+  security_group_id            = aws_security_group.eks_nodes[0].id
+  referenced_security_group_id = aws_security_group.eks_cluster[0].id
+  from_port                    = 9443
+  to_port                      = 9443
+  ip_protocol                  = "tcp"
+  description                  = "Allow EKS control plane to reach AWS Load Balancer Controller webhook"
+}
+
 # Cluster -> Nodes (HTTPS)
 resource "aws_vpc_security_group_ingress_rule" "cluster_to_nodes_https" {
   count                        = var.create_eks_security_group ? 1 : 0
