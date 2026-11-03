@@ -18,12 +18,12 @@ module "security_group" {
   create_eks_security_group           = true
   create_vpc_endpoints_security_group = true
   create_rds_security_group           = true
-  create_alb_security_group           = true
+  create_lb_security_group            = true
   create_ecs_security_group           = true
   application_ports                   = local.application_ports
   vpc_endpoints_allow_eks_nodes       = true
   rds_allow_eks_nodes                 = true
-  alb_ingress_cidrs                   = ["0.0.0.0/0"]
+  lb_ingress_cidrs                    = ["0.0.0.0/0"]
   database_ports                      = [5432]
 }
 

@@ -1,6 +1,6 @@
-output "alb_security_group_id" {
+output "lb_security_group_id" {
   description = "ALB security group ID."
-  value       = try(aws_security_group.alb_sg[0].id, null)
+  value       = try(aws_security_group.lb_sg[0].id, null)
 }
 
 output "ecs_security_group_id" {

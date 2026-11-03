@@ -7,8 +7,8 @@ variable "vpc_id" {
   type        = string
 }
 # Resource creation controls
-variable "create_alb_security_group" {
-  description = "Whether to create the ALB security group."
+variable "create_lb_security_group" {
+  description = "Whether to create the LB security group."
   type        = bool
   default     = false
 }
@@ -38,8 +38,8 @@ variable "create_rds_security_group" {
 }
 
 # ALB configuration
-variable "alb_ingress_cidrs" {
-  description = "CIDR blocks allowed to access the ALB."
+variable "lb_ingress_cidrs" {
+  description = "CIDR blocks allowed to access the LB."
   type        = list(string)
   default     = []
 }
