@@ -32,7 +32,7 @@ module "alb" {
   name_prefix                = local.name_prefix
   vpc_id                     = module.vpc.vpc_id
   public_subnet_ids          = module.vpc.public_subnets_ids
-  security_group_id          = module.security_group.alb_security_group_id
+  security_group_id          = module.security_group.lb_security_group_id
   acm_certificate_arn        = var.acm_certificate_arn
   services                   = local.alb_services
   enable_deletion_protection = true
@@ -47,6 +47,7 @@ module "eks" {
   private_subnet_ids          = module.vpc.private_subnets_ids
   cluster_role_arn            = module.iam.eks_cluster_role_arn
   node_role_arn               = module.iam.eks_node_role_arn
+  karpenter_node_role_arn     = module.iam.karpenter_node_role_arn
   cluster_security_group_id   = module.security_group.eks_cluster_security_group_id
   node_security_group_id      = module.security_group.eks_nodes_security_group_id
   admin_principal_arns        = var.admin_principal_arns
@@ -75,6 +76,7 @@ module "cluster_addons" {
   lb_controller_chart_version            = var.lb_controller_chart_version
   argocd_chart_version                   = var.argocd_chart_version
   secrets_store_csi_driver_chart_version = var.secrets_store_csi_driver_chart_version
+  karpenter_chart_version                = var.karpenter_chart_version
   deployment_replicas                    = var.deployment_replicas
   depends_on                             = [module.eks]
 }
@@ -93,6 +95,8 @@ module "iam" {
   enable_load_balancer_controller = true
   enable_external_dns             = true
   enable_loki                     = true
+  enable_karpenter                = true
+  tempo_bucket_arn                = module.s3.bucket_arns["tempo"]
   loki_bucket_arn = [
     module.s3.bucket_arns["loki_chunks"], module.s3.bucket_arns["loki_ruler"]
   ]
@@ -127,6 +131,16 @@ module "s3" {
         Workload = "Loki"
       }
     }
+    tempo = {
+      bucket_name        = "${local.name_prefix}-tempo-1026"
+      purpose            = "Tempo storage"
+      versioning_enabled = true
+      enable_encryption  = true
+      tags = {
+        Name     = "${local.name_prefix}-tempo"
+        Workload = "Tempo"
+      }
+    }
   }
 }
 
@@ -134,7 +148,7 @@ module "ecr" {
   source           = "./aws-modules/ecr"
   project          = var.project
   repository_names = var.repository_names
-  force_delete = true
+  force_delete     = true
 }
 
 module "rds" {

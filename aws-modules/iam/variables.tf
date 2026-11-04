@@ -37,13 +37,27 @@ variable "loki_bucket_arn" {
   type        = list(string)
   default     = []
 }
+variable "tempo_bucket_arn" {
+  description = "S3 bucket ARN used by Tempo."
+  type        = string
+}
 variable "enable_loki" {
   description = "Whether to create an S3 bucket for Loki."
   type        = bool
   default     = false
 }
+variable "enable_tempo" {
+  description = "Whether to create the Tempo Pod Identity IAM role."
+  type        = bool
+  default     = false
+}
 variable "enable_application_secrets" {
   description = "Whether to create the application secrets access role."
+  type        = bool
+  default     = false
+}
+variable "enable_karpenter" {
+  description = "Whether to create karpenter for nodes autoscaling."
   type        = bool
   default     = false
 }

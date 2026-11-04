@@ -9,7 +9,7 @@ resource "aws_iam_role" "loki" {
 
 resource "aws_iam_role_policy" "loki" {
   count  = var.enable_loki ? 1 : 0
-  name   = "${var.name_prefix}-loki-s3"
+  name   = "loki-s3-access"
   role   = aws_iam_role.loki[0].id
   policy = data.aws_iam_policy_document.loki[0].json
 }

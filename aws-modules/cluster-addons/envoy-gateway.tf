@@ -7,7 +7,7 @@ resource "helm_release" "envoy_gateway" {
   version          = var.envoy_gateway_version
   wait             = true
   wait_for_jobs    = true
-  timeout          = 900
+  timeout          = 600
   values = [
     yamlencode({
       deployment = {

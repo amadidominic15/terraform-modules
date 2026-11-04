@@ -32,6 +32,14 @@ locals {
       namespace       = "loki"
       service_account = "loki"
     }
+    tempo = {
+      namespace       = "monitoring"
+      service_account = "tempo"
+    }
+    karpenter = {
+      namespace       = "karpenter"
+      service_account = "karpenter"
+    }
     application_secrets = {
       namespace       = var.project
       service_account = "${var.project}secrets-sa"

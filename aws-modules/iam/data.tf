@@ -5,22 +5,18 @@ data "aws_iam_policy_document" "eks_cluster_assume_role" {
       type        = "Service"
       identifiers = ["eks.amazonaws.com"]
     }
-    actions = [
-      "sts:AssumeRole"
-    ]
+    actions = ["sts:AssumeRole"]
   }
 }
 
-data "aws_iam_policy_document" "eks_node_assume_role" {
+data "aws_iam_policy_document" "ec2_assume_role" {
   statement {
     effect = "Allow"
     principals {
       type        = "Service"
       identifiers = ["ec2.amazonaws.com"]
     }
-    actions = [
-      "sts:AssumeRole"
-    ]
+    actions = ["sts:AssumeRole"]
   }
 }
 
@@ -31,42 +27,46 @@ data "aws_iam_policy_document" "pod_identity_assume_role" {
       type        = "Service"
       identifiers = ["pods.eks.amazonaws.com"]
     }
-    actions = [
-      "sts:AssumeRole",
-      "sts:TagSession"
-    ]
+    actions = ["sts:AssumeRole", "sts:TagSession"]
   }
 }
+
 
 data "aws_iam_policy_document" "loki" {
   count = var.enable_loki ? 1 : 0
   statement {
-    effect = "Allow"
-    actions = [
-      "s3:ListBucket",
-      "s3:GetBucketLocation"
-    ]
+    effect    = "Allow"
+    actions   = ["s3:ListBucket", "s3:GetBucketLocation"]
     resources = var.loki_bucket_arn
   }
   statement {
-    effect = "Allow"
-    actions = [
-      "s3:PutObject",
-      "s3:GetObject",
-      "s3:DeleteObject"
-    ]
+    effect    = "Allow"
+    actions   = ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"]
     resources = [for arn in var.loki_bucket_arn : "${arn}/*"]
   }
 }
 
+# Tempo S3 policy
+data "aws_iam_policy_document" "tempo" {
+  count = var.enable_tempo ? 1 : 0
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:ListBucket", "s3:GetBucketLocation"]
+    resources = [var.tempo_bucket_arn]
+  }
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"]
+    resources = ["${var.tempo_bucket_arn}/*"]
+  }
+}
+
+
 data "aws_iam_policy_document" "application_secrets" {
   statement {
-    sid    = "ReadApprovedSecrets"
-    effect = "Allow"
-    actions = [
-      "secretsmanager:GetSecretValue",
-      "secretsmanager:DescribeSecret"
-    ]
+    sid       = "ReadApprovedSecrets"
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
     resources = var.application_secret_arns
   }
   dynamic "statement" {
@@ -90,3 +90,6 @@ data "aws_iam_policy_document" "ecs_task_execution_assume_role" {
     }
   }
 }
+
+
+

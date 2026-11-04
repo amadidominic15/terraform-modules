@@ -4,7 +4,7 @@
 
 resource "aws_security_group" "eks_cluster" {
   count       = var.create_eks_security_group ? 1 : 0
-  name_prefix = "${var.name_prefix}-eks-cluster-"
+  name_prefix = "${var.name_prefix}-eks-cluster-sg"
   description = "Security group for EKS control plane"
   vpc_id      = var.vpc_id
   tags = {
@@ -18,12 +18,12 @@ resource "aws_security_group" "eks_cluster" {
 
 resource "aws_security_group" "eks_nodes" {
   count       = var.create_eks_security_group ? 1 : 0
-  name_prefix = "${var.name_prefix}-eks-nodes-"
+  name_prefix = "${var.name_prefix}-eks-nodes-sg"
   description = "Security group for EKS worker nodes"
   vpc_id      = var.vpc_id
   tags = {
     Name                     = "${var.name_prefix}-eks-nodes-sg"
-    "karpenter.sh/discovery" = "${var.name_prefix}-eks-cluster"
+    "karpenter.sh/discovery" = "${var.name_prefix}-eks"
   }
 }
 

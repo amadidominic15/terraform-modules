@@ -5,7 +5,7 @@ resource "aws_subnet" "private" {
   availability_zone = local.azs[count.index]
   tags = {
     Name                                       = "${var.name_prefix}-private-${local.azs[count.index]}"
-    "karpenter.sh/discovery"                   = "${var.name_prefix}-cluster"
+    "karpenter.sh/discovery"                   = "${var.name_prefix}-eks"
     "kubernetes.io/cluster/${var.environment}" = "shared"
     "kubernetes.io/role/internal-elb"          = "1"
   }

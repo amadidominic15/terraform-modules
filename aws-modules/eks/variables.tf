@@ -67,6 +67,10 @@ variable "pod_identity_role_arns" {
   type    = map(string)
   default = {}
 }
+variable "karpenter_node_role_arn" {
+  description = "IAM role ARN used by Karpenter-provisioned EC2 nodes."
+  type        = string
+}
 variable "node_instance_types" {
   description = "EC2 instance types for the managed node group"
   type        = list(string)
