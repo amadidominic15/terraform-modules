@@ -42,7 +42,7 @@ locals {
     }
     application_secrets = {
       namespace       = var.project
-      service_account = "${var.project}secrets-sa"
+      service_account = "${var.project}-secrets-sa"
     }
   }
 }
