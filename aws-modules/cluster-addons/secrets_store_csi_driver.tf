@@ -14,6 +14,10 @@ resource "helm_release" "secrets_store_csi_driver" {
       secrets-store-csi-driver = {
         install = true
       }
+      # Required to sync mounted values into Kubernetes Secrets.
+      syncSecret = {
+        enabled = true
+      }
       # Request the token audiences needed for Pod Identity.
       tokenRequests = [
         { audience = "sts.amazonaws.com" },
