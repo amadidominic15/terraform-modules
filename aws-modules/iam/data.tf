@@ -1,3 +1,4 @@
+data "aws_caller_identity" "current" {}
 data "aws_iam_policy_document" "eks_cluster_assume_role" {
   statement {
     effect = "Allow"
@@ -30,7 +31,6 @@ data "aws_iam_policy_document" "pod_identity_assume_role" {
     actions = ["sts:AssumeRole", "sts:TagSession"]
   }
 }
-
 
 data "aws_iam_policy_document" "loki" {
   count = var.enable_loki ? 1 : 0

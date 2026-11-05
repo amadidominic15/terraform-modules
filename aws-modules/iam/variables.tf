@@ -2,6 +2,10 @@ variable "name_prefix" {
   description = "Common prefix for resource names"
   type        = string
 }
+variable "aws_region" {
+  description = "AWS region to deploy resources in."
+  type        = string
+}
 variable "enable_vpc_cni" {
   description = "Create IAM role for VPC CNI."
   type        = bool
@@ -60,6 +64,11 @@ variable "enable_karpenter" {
   description = "Whether to create karpenter for nodes autoscaling."
   type        = bool
   default     = false
+}
+variable "karpenter_controller_policy_file" {
+  description = "Path to the Karpenter controller IAM policy file relative to the module."
+  type        = string
+  default     = "aws_karpenter_policies/karpenter-controller.json"
 }
 variable "application_secret_arns" {
   description = "Exact Secrets Manager ARNs this application can read."

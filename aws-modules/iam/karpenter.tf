@@ -25,3 +25,14 @@ resource "aws_iam_role" "karpenter_controller" {
     Name = "${var.name_prefix}-karpenter-controller-role"
   }
 }
+
+resource "aws_iam_role_policy" "karpenter_controller" {
+  count  = var.enable_karpenter ? 1 : 0
+  name   = "${var.name_prefix}-karpenter-controller"
+  role   = aws_iam_role.karpenter_controller[0].id
+  policy = templatefile("${path.module}/${var.karpenter_controller_policy_file}", {
+    AWS_REGION     = var.aws_region
+    AWS_ACCOUNT_ID = data.aws_caller_identity.current.account_id
+    NAME_PREFIX    = var.name_prefix
+  })
+}
