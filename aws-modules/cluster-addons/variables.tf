@@ -29,6 +29,9 @@ variable "envoy_gateway_version" {
 variable "deployment_replicas" {
   type = number
 }
+variable "replicas" {
+  type = number
+}
 variable "karpenter_chart_version" {
   type = string
 }

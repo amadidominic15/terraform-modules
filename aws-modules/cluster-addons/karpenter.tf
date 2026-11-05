@@ -16,16 +16,16 @@ resource "helm_release" "karpenter" {
       settings = {
         clusterName = "${var.name_prefix}-eks"
       }
-      replicas = 2
+      replicas = var.replicas
       controller = {
         resources = {
           requests = {
-            cpu    = "500m"
-            memory = "512Mi"
+            cpu    = "250m"
+            memory = "256Mi"
           }
           limits = {
-            cpu    = "1"
-            memory = "1Gi"
+            cpu    = "500"
+            memory = "512Mi"
           }
         }
       }

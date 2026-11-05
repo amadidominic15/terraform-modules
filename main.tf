@@ -89,6 +89,7 @@ module "secrets_manager" {
 module "iam" {
   source                          = "./aws-modules/iam"
   name_prefix                     = local.name_prefix
+  aws_region                      = var.aws_region
   enable_vpc_cni                  = true
   enable_ebs_csi                  = true
   enable_cloudwatch               = true
