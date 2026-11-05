@@ -5,20 +5,26 @@ resource "helm_release" "secrets_store_csi_driver" {
   version          = var.secrets_store_csi_driver_chart_version
   namespace        = "kube-system"
   create_namespace = false
-  wait             = true
-  timeout          = 600
+  wait    = true
+  timeout = 600
   values = [
     yamlencode({
       awsRegion = var.aws_region
-      # Use the AWS provider chart's built-in CSI driver dependency.
+      # Install the CSI driver dependency.
       secrets-store-csi-driver = {
         install = true
+        # Enable Kubernetes Secret synchronization.
+        syncSecret = {
+          enabled = true
+        }
+        enableSecretRotation = true # Enable automatic secret rotation.
+        rotationPollInterval = "1h" # Check for updated secrets at a reasonable interval.
       }
-      # Required to sync mounted values into Kubernetes Secrets.
+      # Keep the provider chart setting.
       syncSecret = {
         enabled = true
       }
-      # Request the token audiences needed for Pod Identity.
+      # EKS Pod Identity token audiences.
       tokenRequests = [
         { audience = "sts.amazonaws.com" },
         { audience = "pods.eks.amazonaws.com" }
