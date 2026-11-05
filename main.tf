@@ -72,6 +72,7 @@ module "cluster_addons" {
   source                                 = "./aws-modules/cluster-addons"
   name_prefix                            = local.name_prefix
   aws_region                             = var.aws_region
+  replicas = var.replicas
   vpc_id                                 = module.vpc.vpc_id
   lb_controller_chart_version            = var.lb_controller_chart_version
   argocd_chart_version                   = var.argocd_chart_version
