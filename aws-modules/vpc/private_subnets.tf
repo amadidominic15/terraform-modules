@@ -6,7 +6,7 @@ resource "aws_subnet" "private" {
   tags = {
     Name                                       = "${var.name_prefix}-private-${local.azs[count.index]}"
     "karpenter.sh/discovery"                   = "${var.name_prefix}-eks"
-    "kubernetes.io/cluster/${var.environment}" = "shared"
+    "kubernetes.io/cluster/${var.name_prefix}-eks" = "shared"
     "kubernetes.io/role/internal-elb"          = "1"
   }
 }
