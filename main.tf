@@ -52,7 +52,15 @@ module "eks" {
   node_security_group_id      = module.security_group.eks_nodes_security_group_id
   admin_principal_arns        = var.admin_principal_arns
   enable_pod_identity         = true
-  pod_identity_role_arns      = module.iam.pod_identity_role_arns
+  pod_identity_role_arns      = merge(module.iam.pod_identity_role_arns, module.iam.application_secrets_role_arns)
+  application_secrets_pod_identity = {
+    for name, config in local.application_secrets :
+    name => {
+      namespace       = config.namespace
+      service_account = config.service_account
+    }
+  }
+
   addons = {
     coredns                         = {}
     kube-proxy                      = {}
@@ -98,14 +106,12 @@ module "iam" {
   enable_external_dns             = true
   enable_loki                     = true
   enable_karpenter                = true
+  enable_application_secrets      = true
   tempo_bucket_arn                = module.s3.bucket_arns["tempo"]
   loki_bucket_arn = [
     module.s3.bucket_arns["loki_chunks"], module.s3.bucket_arns["loki_ruler"]
   ]
-  enable_application_secrets = true
-  application_secret_arns = concat(
-    [for name in var.application_secret_names : module.secrets_manager.secret_arns[name]]
-  )
+  application_secrets = local.application_secrets
 }
 
 module "s3" {
@@ -159,8 +165,8 @@ module "rds" {
   rds_engine              = var.rds_engine
   rds_engine_version      = var.rds_engine_version
   rds_instance_class      = var.rds_instance_class
-  db_name                 = "application"
-  master_username         = "dbadmin"
+  db_name                 = "cloudkitchen"
+  db_admin                = "db-admin"
   port                    = 5432
   private_subnet_ids      = module.vpc.private_subnets_ids
   vpc_security_group_ids  = [module.security_group.rds_security_group_id]

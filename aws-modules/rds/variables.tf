@@ -29,6 +29,10 @@ variable "db_name" {
   description = "Initial database name."
   type        = string
 }
+variable "db_admin" {
+  description = "Administrative database username"
+  type        = string
+}
 variable "private_subnet_ids" {
   description = "Private subnet IDs used by EKS"
   type        = list(string)
@@ -40,10 +44,6 @@ variable "private_subnet_ids" {
 variable "vpc_security_group_ids" {
   description = "Security group IDs attached to RDS."
   type        = list(string)
-}
-variable "master_username" {
-  description = "Administrative database username"
-  type        = string
 }
 variable "port" {
   description = "Database listener port."

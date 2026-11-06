@@ -7,42 +7,49 @@ data "aws_eks_addon_version" "eks_addons" {
 }
 
 locals {
-  pod_identity = {
-    vpc_cni = {
-      namespace       = "kube-system"
-      service_account = "aws-node"
-    }
-    ebs_csi = {
-      namespace       = "kube-system"
-      service_account = "ebs-csi-controller-sa"
-    }
-    cloudwatch = {
-      namespace       = "amazon-cloudwatch"
-      service_account = "cloudwatch-agent"
-    }
-    load_balancer_controller = {
-      namespace       = "kube-system"
-      service_account = "aws-load-balancer-controller"
-    }
-    external_dns = {
-      namespace       = "external-dns"
-      service_account = "external-dns"
-    }
-    loki = {
-      namespace       = "loki"
-      service_account = "loki"
-    }
-    tempo = {
-      namespace       = "monitoring"
-      service_account = "tempo"
-    }
-    karpenter = {
-      namespace       = "karpenter"
-      service_account = "karpenter"
-    }
-    application_secrets = {
-      namespace       = var.project
-      service_account = "${var.project}-secrets-sa"
-    }
-  }
+  pod_identity = merge(
+    {
+      vpc_cni = {
+        namespace       = "kube-system"
+        service_account = "aws-node"
+      }
+
+      ebs_csi = {
+        namespace       = "kube-system"
+        service_account = "ebs-csi-controller-sa"
+      }
+
+      cloudwatch = {
+        namespace       = "amazon-cloudwatch"
+        service_account = "cloudwatch-agent"
+      }
+
+      load_balancer_controller = {
+        namespace       = "kube-system"
+        service_account = "aws-load-balancer-controller"
+      }
+
+      external_dns = {
+        namespace       = "external-dns"
+        service_account = "external-dns"
+      }
+
+      loki = {
+        namespace       = "loki"
+        service_account = "loki"
+      }
+
+      tempo = {
+        namespace       = "monitoring"
+        service_account = "tempo"
+      }
+
+      karpenter = {
+        namespace       = "karpenter"
+        service_account = "karpenter"
+      }
+    },
+
+    var.application_secrets_pod_identity
+  )
 }

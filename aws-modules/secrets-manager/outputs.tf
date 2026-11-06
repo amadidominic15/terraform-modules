@@ -5,6 +5,13 @@ output "secret_arns" {
     name => secret.arn
   }
 }
+output "kms_key_arns" {
+  description = "Environment-specific KMS key ARNs"
+  value = {
+    for env, key in aws_kms_key.secrets :
+    env => key.arn
+  }
+}
 
 output "secret_names" {
   description = "Map of configured secret names."

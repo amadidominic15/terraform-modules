@@ -5,8 +5,8 @@ resource "helm_release" "secrets_store_csi_driver" {
   version          = var.secrets_store_csi_driver_chart_version
   namespace        = "kube-system"
   create_namespace = false
-  wait    = true
-  timeout = 600
+  wait             = true
+  timeout          = 600
   values = [
     yamlencode({
       awsRegion = var.aws_region

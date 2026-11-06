@@ -1,23 +1,23 @@
 resource "aws_iam_role" "application_secrets" {
-  count              = var.enable_application_secrets ? 1 : 0
-  name               = "${var.name_prefix}-application-secrets-role"
+  for_each           = var.enable_application_secrets ? var.application_secrets : {}
+  name               = "${var.name_prefix}-${each.key}-secrets-role"
   assume_role_policy = data.aws_iam_policy_document.pod_identity_assume_role.json
   tags = {
-    Name      = "${var.name_prefix}-application-secrets-role"
-    Purpose   = "ApplicationSecretsAccess"
-    ManagedBy = "Terraform"
+    Name    = "${var.name_prefix}-${each.key}-secrets-role"
+    Purpose = "ApplicationSecretsAccess"
   }
 }
 
 resource "aws_iam_role_policy" "application_secrets" {
-  count  = var.enable_application_secrets ? 1 : 0
-  name   = "${var.name_prefix}-application-secrets-policy"
-  role   = aws_iam_role.application_secrets[0].id
-  policy = data.aws_iam_policy_document.application_secrets.json
+  for_each = var.enable_application_secrets ? var.application_secrets : {}
+  name     = "${var.name_prefix}-${each.key}-secrets-policy"
+  role     = aws_iam_role.application_secrets[each.key].id
+  policy   = data.aws_iam_policy_document.application_secrets[each.key].json
   lifecycle {
     precondition {
-      condition     = length(var.application_secret_arns) > 0
-      error_message = "At least one secret ARN is required when application secrets access is enabled."
+      condition     = length(each.value.secret_arns) > 0
+      error_message = "At least one secret ARN is required for each application."
     }
   }
 }
+

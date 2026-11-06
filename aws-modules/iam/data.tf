@@ -1,4 +1,5 @@
 data "aws_caller_identity" "current" {}
+
 data "aws_iam_policy_document" "eks_cluster_assume_role" {
   statement {
     effect = "Allow"
@@ -61,21 +62,22 @@ data "aws_iam_policy_document" "tempo" {
   }
 }
 
-
 data "aws_iam_policy_document" "application_secrets" {
+  for_each = var.enable_application_secrets ? var.application_secrets : {}
   statement {
-    sid       = "ReadApprovedSecrets"
+    sid       = "ReadApplicationSecret"
     effect    = "Allow"
     actions   = ["secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret"]
-    resources = var.application_secret_arns
+    resources = each.value.secret_arns
   }
+
   dynamic "statement" {
-    for_each = length(var.application_secrets_kms_key_arns) > 0 ? [1] : []
+    for_each = length(each.value.kms_key_arns) > 0 ? [1] : []
     content {
-      sid       = "DecryptApprovedSecrets"
+      sid       = "DecryptApplicationSecrets"
       effect    = "Allow"
       actions   = ["kms:Decrypt"]
-      resources = var.application_secrets_kms_key_arns
+      resources = each.value.kms_key_arns
     }
   }
 }

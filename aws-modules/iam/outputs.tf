@@ -14,9 +14,12 @@ output "karpenter_node_role_arn" {
   description = "IAM role ARN assumed by Karpenter-provisioned EC2 nodes."
   value       = var.enable_karpenter ? aws_iam_role.karpenter_node[0].arn : null
 }
-output "application_secrets_role_arn" {
+output "application_secrets_role_arns" {
   description = "IAM role for the application's Secrets Manager access."
-  value       = var.enable_application_secrets ? aws_iam_role.application_secrets[0].arn : null
+  value = {
+    for name, role in aws_iam_role.application_secrets :
+    name => role.arn
+  }
 }
 output "ecs_task_execution_role_arn" {
   description = "ARN of the ECS task execution role."
@@ -54,7 +57,8 @@ output "pod_identity_role_arns" {
       tempo = aws_iam_role.tempo[0].arn
     } : {},
     var.enable_application_secrets ? {
-      application_secrets = aws_iam_role.application_secrets[0].arn
+      for name, role in aws_iam_role.application_secrets :
+      name => role.arn
     } : {}
   )
 }

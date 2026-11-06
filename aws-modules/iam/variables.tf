@@ -70,15 +70,13 @@ variable "karpenter_controller_policy_file" {
   type        = string
   default     = "aws_karpenter_policies/karpenter-controller.json"
 }
-variable "application_secret_arns" {
-  description = "Exact Secrets Manager ARNs this application can read."
-  type        = list(string)
-  default     = []
-}
-variable "application_secrets_kms_key_arns" {
-  description = "Customer-managed KMS key ARNs required to decrypt secrets."
-  type        = list(string)
-  default     = []
+variable "application_secrets" {
+  description = "Application-specific Secrets Manager access configuration."
+  type = map(object({
+    secret_arns   = list(string)
+    kms_key_arns = optional(list(string), [])
+  }))
+  default = {}
 }
 variable "tags" {
   description = "Tags applied to supported resources."

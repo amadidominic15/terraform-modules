@@ -5,8 +5,8 @@ resource "aws_subnet" "public" {
   availability_zone       = local.azs[count.index]
   map_public_ip_on_launch = true
   tags = {
-    Name                                       = "${var.name_prefix}-public-${local.azs[count.index]}"
+    Name                                           = "${var.name_prefix}-public-${local.azs[count.index]}"
     "kubernetes.io/cluster/${var.name_prefix}-eks" = "shared"
-    "kubernetes.io/role/elb"                   = "1"
+    "kubernetes.io/role/elb"                       = "1"
   }
 }

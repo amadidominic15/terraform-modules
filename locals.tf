@@ -12,16 +12,18 @@ locals {
       environment       = {}
       secrets           = {}
     }
-    orders = {
-      image             = "${module.ecr.repository_urls["orders"]}:latest"
-      container_port    = 3001
-      cpu               = 256
-      memory            = 512
-      desired_count     = 2
-      health_check_path = "/health"
-      path_pattern      = ["/orders", "/orders/*"]
-      environment       = {}
-      secrets           = {}
+  }
+
+  application_secrets = {
+    application = {
+      namespace       = "cloudkitchen"
+      service_account = "cloudkitchen-sa"
+      secret_arns = [
+        module.secrets_manager.secret_arns["dev/cloudkitchen/application"]
+      ]
+      kms_key_arns = [
+        module.secrets_manager.kms_key_arns["dev"]
+      ]
     }
   }
 

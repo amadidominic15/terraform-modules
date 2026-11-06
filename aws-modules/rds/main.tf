@@ -8,14 +8,14 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 }
 
 resource "aws_db_instance" "db_instance" {
-  identifier = "${var.name_prefix}-db"
+  identifier = "${var.name_prefix}-${var.rds_engine}-db"
 
   # Database engine
   engine         = var.rds_engine
   engine_version = var.rds_engine_version
   instance_class = var.rds_instance_class
   db_name        = var.db_name
-  username       = var.master_username
+  username       = var.db_admin
   port           = var.port
 
   # RDS generates and manages the master password.

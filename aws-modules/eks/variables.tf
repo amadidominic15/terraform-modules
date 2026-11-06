@@ -67,6 +67,14 @@ variable "pod_identity_role_arns" {
   type    = map(string)
   default = {}
 }
+variable "application_secrets_pod_identity" {
+  description = "Application service accounts requiring Pod Identity."
+  type = map(object({
+    namespace       = string
+    service_account = string
+  }))
+  default = {}
+}
 variable "karpenter_node_role_arn" {
   description = "IAM role ARN used by Karpenter-provisioned EC2 nodes."
   type        = string
