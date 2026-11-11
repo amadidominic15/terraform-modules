@@ -56,6 +56,12 @@ variable "addons" {
   }))
   default = {}
 }
+variable "addon_configuration_values" {
+  description = "Optional configuration values for individual EKS add-ons."
+
+  type    = map(string)
+  default = {}
+}
 variable "enable_pod_identity" {
   description = "Enable EKS Pod Identity associations."
   type        = bool
