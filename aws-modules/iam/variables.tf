@@ -73,7 +73,7 @@ variable "karpenter_controller_policy_file" {
 variable "application_secrets" {
   description = "Application-specific Secrets Manager access configuration."
   type = map(object({
-    secret_arns   = list(string)
+    secret_arns  = list(string)
     kms_key_arns = optional(list(string), [])
   }))
   default = {}
