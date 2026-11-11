@@ -5,4 +5,5 @@ resource "aws_eks_addon" "eks_addons" {
   addon_version               = data.aws_eks_addon_version.eks_addons[each.key].version
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "OVERWRITE"
+  configuration_values = try(var.addon_configuration_values[each.key], null)
 }

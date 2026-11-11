@@ -58,7 +58,6 @@ variable "addons" {
 }
 variable "addon_configuration_values" {
   description = "Optional configuration values for individual EKS add-ons."
-
   type    = map(string)
   default = {}
 }
